@@ -1,16 +1,20 @@
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { ChevronLeft, ChevronRight, Download, Maximize2, Minimize2 } from 'lucide-react';
-import { getDocument, GlobalWorkerOptions, type RenderTask } from 'pdfjs-dist';
+import { getDocument, GlobalWorkerOptions, version as versionPdfjs, type RenderTask } from 'pdfjs-dist';
 import { PageFlip, type Orientation } from 'page-flip';
-/*
- * Worker de PDF.js con Vite: el sufijo `?url` hace que Vite emita el worker como asset
- * con hash propio y nos devuelva su URL final, tanto en `astro dev` como en `astro build`.
- * Se importa desde el mismo paquete que la API, así que ambas versiones siempre coinciden
- * (si no coinciden, PDF.js falla con "The API version does not match the Worker version").
- */
-import workerSrc from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 
-GlobalWorkerOptions.workerSrc = workerSrc;
+/*
+ * Worker de PDF.js desde CDN. Safari/WebKit bloqueaba en Vercel el worker empaquetado
+ * localmente (.mjs emitido por Vite), así que se carga el archivo oficial de cdnjs.
+ *  - La URL usa `version` de la propia librería: API y worker siempre coinciden (si no,
+ *    PDF.js falla con "The API version does not match the Worker version"). Al actualizar
+ *    pdfjs-dist, comprueba que cdnjs ya publique esa versión.
+ *  - Un Worker no puede crearse directamente desde otro origen: PDF.js lo detecta y lo
+ *    envuelve en un blob que hace `import()` de esta URL (cdnjs responde con CORS abierto).
+ *  - Si algún día se añade una Content-Security-Policy, debe permitir
+ *    `worker-src blob:` y `script-src https://cdnjs.cloudflare.com`.
+ */
+GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${versionPdfjs}/pdf.worker.min.mjs`;
 
 interface Props {
   /** Ruta pública del PDF, ej. "/pdfs/pulso-num-1.pdf". */
