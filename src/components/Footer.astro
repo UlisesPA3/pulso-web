@@ -1,6 +1,7 @@
 ---
 import { ArrowUpRight, Mail } from 'lucide-react';
 import LogoPulso from './React/LogoPulso';
+import { LINKEDIN_PATH, LINKEDIN_URL } from '../lib/redes';
 
 const INSTAGRAM_URL = 'https://www.instagram.com/nexusembsccm/';
 const EMAIL = 'nexusembsccm@gmail.com';
@@ -81,6 +82,14 @@ const titulo = 'font-mono text-xs font-medium tracking-[0.22em] text-accent-gree
               <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={INSTAGRAM_PATH}></path></svg>
             </span>
             <span class="text-sm">@nexusembsccm <span class="sr-only">en Instagram (abre en una pestaña nueva)</span></span>
+          </a>
+        </li>
+        <li>
+          <a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer" class="group flex min-h-12 items-center gap-3 text-primary-100 transition-colors hover:text-white">
+            <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/10 transition-colors group-hover:bg-accent-green group-hover:text-ink">
+              <svg class="h-[1.125rem] w-[1.125rem]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={LINKEDIN_PATH}></path></svg>
+            </span>
+            <span class="text-sm">NEXUS EMBS <span class="sr-only">en LinkedIn (abre en una pestaña nueva)</span></span>
           </a>
         </li>
       </ul>
