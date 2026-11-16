@@ -1,20 +1,23 @@
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { ChevronLeft, ChevronRight, Download, Maximize2, Minimize2 } from 'lucide-react';
-import { getDocument, GlobalWorkerOptions, version as versionPdfjs, type RenderTask } from 'pdfjs-dist';
-import { PageFlip, type Orientation } from 'page-flip';
-
 /*
- * Worker de PDF.js desde CDN. Safari/WebKit bloqueaba en Vercel el worker empaquetado
- * localmente (.mjs emitido por Vite), así que se carga el archivo oficial de cdnjs.
- *  - La URL usa `version` de la propia librería: API y worker siempre coinciden (si no,
- *    PDF.js falla con "The API version does not match the Worker version"). Al actualizar
- *    pdfjs-dist, comprueba que cdnjs ya publique esa versión.
- *  - Un Worker no puede crearse directamente desde otro origen: PDF.js lo detecta y lo
- *    envuelve en un blob que hace `import()` de esta URL (cdnjs responde con CORS abierto).
- *  - Si algún día se añade una Content-Security-Policy, debe permitir
- *    `worker-src blob:` y `script-src https://cdnjs.cloudflare.com`.
+ * PDF.js en su build "legacy", tanto la API como el worker.
+ *
+ * El build moderno de pdfjs-dist 6 usa JavaScript muy reciente sin polyfills y Safari/WebKit
+ * fallaba con "this._requestsByChunk.getOrInsertComputed is not a function". El build legacy
+ * es el mismo código con los polyfills (core-js) incluidos. Las dos mitades tienen que ser
+ * legacy: ese error concreto salta dentro del worker.
+ *
+ * El worker vuelve a ser local: el sufijo `?url` hace que Vite lo emita como asset con hash
+ * y devuelva su URL final, en `astro dev` y en `astro build`. Al salir del mismo paquete que
+ * la API, las versiones siempre coinciden (si no, PDF.js falla con "The API version does not
+ * match the Worker version") y el visor no depende de un CDN externo.
  */
-GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${versionPdfjs}/pdf.worker.min.mjs`;
+import { getDocument, GlobalWorkerOptions, type RenderTask } from 'pdfjs-dist/legacy/build/pdf.mjs';
+import { PageFlip, type Orientation } from 'page-flip';
+import workerSrc from 'pdfjs-dist/legacy/build/pdf.worker.min.mjs?url';
+
+GlobalWorkerOptions.workerSrc = workerSrc;
 
 interface Props {
   /** Ruta pública del PDF, ej. "/pdfs/pulso-num-1.pdf". */
