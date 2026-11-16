@@ -1,0 +1,39 @@
+---
+import ZeroGCorners from './React/hero/ZeroGCorners';
+import LogoFrecuencia from './LogoFrecuencia.astro';
+---
+
+{/* Portada: réplica viva de public/images/Portada.png (lavanda clara, logo al centro, cuatro esquinas flotando). */}
+<section class="relative isolate flex min-h-[calc(100svh-4rem)] flex-col overflow-hidden bg-[#faf8fd] sm:min-h-[min(calc(100svh-4rem),58vw)]" aria-labelledby="hero-titulo">
+  {/* Bruma lavanda en las esquinas, centro casi blanco */}
+  <div
+    class="absolute inset-0 -z-10 bg-[radial-gradient(60%_60%_at_0%_0%,var(--color-lavender),transparent_70%),radial-gradient(55%_65%_at_100%_0%,var(--color-lavender),transparent_70%),radial-gradient(60%_55%_at_0%_100%,var(--color-lavender),transparent_70%),radial-gradient(70%_50%_at_100%_100%,var(--color-lavender),transparent_70%)]"
+    aria-hidden="true"
+  >
+  </div>
+
+  <ZeroGCorners client:idle />
+
+  <div class="relative flex flex-1 flex-col items-center justify-center px-4 py-24 sm:py-16">
+    <h1 id="hero-titulo" class="rise w-[94%] max-w-[78rem] sm:w-[63%]" style="--i:0">
+      <span class="sr-only">PULSO, revista biomédica universitaria</span>
+      <LogoFrecuencia />
+    </h1>
+
+    <p class="rise mt-6 flex items-center gap-4 sm:mt-[2.2vw] sm:gap-[3vw]" style="--i:2" aria-hidden="true">
+      <span class="h-7 w-2 border-2 border-r-0 border-primary sm:h-[2.4vw] sm:w-[0.7vw]"></span>
+      <span class="font-mono text-xs font-medium tracking-[0.14em] whitespace-nowrap text-ink uppercase sm:text-[clamp(0.8rem,1.3vw,1.35rem)] sm:tracking-[0.12em]">Revista Biomédica Universitaria</span>
+      <span class="h-7 w-2 border-2 border-l-0 border-primary sm:h-[2.4vw] sm:w-[0.7vw]"></span>
+    </p>
+  </div>
+
+  {/* En móvil, un velo bajo el lema para que se lea sobre el microscopio */}
+  <div class="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-linear-to-t from-[#faf8fd] to-transparent sm:hidden" aria-hidden="true"></div>
+
+  <p class="rise relative px-4 pb-6 text-center font-display text-xs font-bold tracking-[0.3em] whitespace-nowrap text-primary uppercase sm:pb-7 sm:text-sm sm:tracking-[0.42em]" style="--i:4">
+    Una iniciativa de NEXUS EMBS
+  </p>
+
+  {/* Línea divisoria multicolor */}
+  <div class="relative h-[3px] bg-[linear-gradient(90deg,var(--color-primary),var(--color-accent-coral),var(--color-accent-green),var(--color-accent-blue))]" aria-hidden="true"></div>
+</section>

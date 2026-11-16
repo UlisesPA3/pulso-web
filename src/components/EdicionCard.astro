@@ -1,0 +1,59 @@
+---
+import { tienePdf, tienePortada, type Edicion } from '../lib/ediciones';
+
+interface Props {
+  edicion: Edicion;
+  /** Nivel del encabezado según la página. */
+  nivel?: 'h2' | 'h3';
+}
+
+const { edicion, nivel: Titulo = 'h2' } = Astro.props;
+const { titulo, volumen, numero, fecha, portada } = edicion.data;
+const conPortada = tienePortada(edicion);
+const conPdf = tienePdf(edicion);
+---
+
+{/* Un ejemplar apoyado en su repisa: al pasar el cursor se levanta y se inclina. */}
+<a
+  href={`/ediciones/${edicion.id}`}
+  class="group relative block rounded-lg pb-5 [perspective:1100px]"
+>
+  <div
+    class="@container relative aspect-[5/6] origin-bottom overflow-hidden rounded-r-md rounded-l-sm bg-primary-100 shadow-shelf ring-1 ring-ink/10 transition-[transform,box-shadow] duration-500 ease-out-expo group-hover:-translate-y-3 group-hover:scale-[1.03] group-hover:[transform:rotateY(-9deg)_rotateX(2deg)] group-hover:shadow-lift group-focus-visible:-translate-y-3"
+  >
+    {
+      conPortada ? (
+        <img
+          src={portada}
+          alt={`Portada de PULSO Vol. ${volumen} Núm. ${numero}`}
+          width="720"
+          height="863"
+          loading="lazy"
+          decoding="async"
+          class="h-full w-full object-cover"
+        />
+      ) : (
+        <div class="flex h-full flex-col justify-between bg-[radial-gradient(120%_80%_at_80%_100%,rgb(242_109_91/0.4),transparent_60%),linear-gradient(160deg,var(--color-primary),var(--color-bg-dark))] p-[9%]">
+          <p class="font-mono text-xs tracking-[0.2em] text-primary-100 uppercase">No. {numero} · {fecha}</p>
+          <p class="font-display text-[clamp(1.05rem,5.2cqw,1.7rem)] leading-[1.05] font-extrabold text-balance text-accent-lime">{titulo}</p>
+          <p class="font-mono text-xs tracking-wider text-primary-200 uppercase">Portada en preparación</p>
+        </div>
+      )
+    }
+    {/* Lomo y brillo del papel */}
+    <span class="pointer-events-none absolute inset-y-0 left-0 w-[5%] bg-linear-to-r from-black/30 via-white/10 to-transparent" aria-hidden="true"></span>
+    <span class="pointer-events-none absolute inset-0 bg-linear-to-tr from-transparent via-white/0 to-white/15 opacity-0 transition-opacity duration-500 group-hover:opacity-100" aria-hidden="true"></span>
+  </div>
+
+  {/* Repisa */}
+  <span class="absolute inset-x-[-0.75rem] bottom-3 h-2 rounded-sm bg-linear-to-b from-white to-primary-200 shadow-[0_12px_18px_-8px_rgb(38_28_42/0.45)] ring-1 ring-primary-200" aria-hidden="true"></span>
+
+  <div class="mt-9">
+    <p class="font-mono text-xs tracking-[0.16em] text-primary uppercase">
+      Vol. {volumen} · Núm. {numero}
+      {!conPdf && <span class="ml-1 text-ink/60">· PDF próximamente</span>}
+    </p>
+    <Titulo class="text-title mt-2 text-lg leading-snug transition-colors group-hover:text-primary sm:text-xl">{titulo}</Titulo>
+    <p class="mt-1.5 text-sm text-ink/60"><time>{fecha}</time></p>
+  </div>
+</a>

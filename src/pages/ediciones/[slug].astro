@@ -1,0 +1,77 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import { ArrowLeft } from 'lucide-react';
+import VisorPDF from '../../components/React/VisorPDF';
+import Layout from '../../layouts/Layout.astro';
+import { getEdicionesPublicadas, tienePdf, type Edicion } from '../../lib/ediciones';
+
+export const getStaticPaths = (async () => {
+  const ediciones = await getEdicionesPublicadas();
+  return ediciones.map((edicion) => ({
+    params: { slug: edicion.id },
+    props: { edicion },
+  }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  edicion: Edicion;
+}
+
+const { edicion } = Astro.props;
+const { titulo, volumen, numero, fecha, resumen, archivoPdf } = edicion.data;
+// Una edición puede publicarse antes de subir su PDF: en ese caso no se monta el visor.
+const pdfDisponible = tienePdf(edicion);
+const { Content } = await render(edicion);
+---
+
+<Layout title={titulo} description={resumen}>
+  <a href="/ediciones" class="link-arrow group text-sm">
+    <ArrowLeft className="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-1" aria-hidden="true" /> Hemeroteca
+  </a>
+
+  <header class="mt-4 max-w-3xl">
+    <p class="eyebrow rise" style="--i:0">
+      Vol. {volumen} · Núm. {numero} · <time>{fecha}</time>
+    </p>
+    <h1 class="text-display rise mt-4 text-4xl text-balance sm:text-6xl" style="--i:1">{titulo}</h1>
+    <p class="rise mt-5 text-lg text-ink/75" style="--i:2">{resumen}</p>
+  </header>
+
+  <section class="mt-10" aria-labelledby="visor-titulo">
+    <h2 id="visor-titulo" class="sr-only">Leer la edición</h2>
+    {
+      pdfDisponible ? (
+        <>
+          {/* client:only: PDF.js depende de APIs del navegador y no puede ejecutarse en el servidor. */}
+          <VisorPDF client:only="react" url={archivoPdf} titulo={titulo}>
+            <div
+              slot="fallback"
+              class="mx-auto flex aspect-[3/4] w-full max-w-2xl animate-pulse items-center justify-center rounded-lg border border-primary-200 bg-white text-sm text-ink/70 sm:aspect-[3/2]"
+            >
+              Cargando el visor…
+            </div>
+          </VisorPDF>
+          <noscript>
+            <p class="mt-4 text-center text-ink/70">
+              El visor necesita JavaScript. <a class="text-primary underline" href={archivoPdf}>Abre el PDF directamente</a>.
+            </p>
+          </noscript>
+        </>
+      ) : (
+        <div class="surface px-6 py-12 text-center">
+          <p class="text-title text-xl">El PDF de esta edición aún no está disponible</p>
+          <p class="mt-2 text-ink/70">Lo publicaremos aquí en cuanto esté listo. Mientras tanto, puedes leer los números anteriores.</p>
+          <a href="/ediciones" class="btn btn-outline mt-6">Ir a la hemeroteca</a>
+        </div>
+      )
+    }
+  </section>
+
+  <section class="mt-14 max-w-3xl border-t border-primary-200 pt-10" aria-labelledby="carta-editorial">
+    <h2 id="carta-editorial" class="text-title text-2xl">Carta editorial</h2>
+    <div class="mt-4 space-y-4 leading-relaxed text-ink/75">
+      <Content />
+    </div>
+  </section>
+</Layout>

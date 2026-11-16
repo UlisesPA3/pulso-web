@@ -1,0 +1,21 @@
+---
+import HeaderNav from './React/HeaderNav';
+import { getEdicionActual } from '../lib/ediciones';
+
+const links = [
+  { href: '/', label: 'Inicio' },
+  { href: '/#revista', label: 'Revista' },
+  { href: '/#secciones', label: 'Secciones' },
+  { href: '/ediciones', label: 'Ediciones' },
+  { href: '/#sobre-nosotros', label: 'Sobre nosotros' },
+  { href: '/contacto', label: 'Contacto' },
+];
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const actual = await getEdicionActual();
+const edicionHref = actual ? `/ediciones/${actual.id}` : '/ediciones';
+---
+
+{/* Fondo blanco con blur; wordmark en dos líneas a la izquierda y enlaces a la derecha.
+    Isla React: píldora de hover, estado al hacer scroll y menú móvil animado con Motion. */}
+<HeaderNav client:load links={links} path={path} edicionHref={edicionHref} />

@@ -1,0 +1,113 @@
+---
+import { logoTrazo as t } from '../lib/logo-pulso-trazo';
+
+/**
+ * Logo original de PULSO (recorte sin fondo) con una señal que lo recorre.
+ *
+ * Las imágenes son el logo real; encima va un SVG con el eje exacto del trazo
+ * (scripts/logo_pulso.py), en el mismo sistema de coordenadas. Un haz viaja por ese eje:
+ * cola izquierda -> P -> u -> l -> s; al pasar por la P se bifurca por su panza y, al
+ * terminar la "s", la "o" late, sus anillos emiten una onda y la señal sale por la derecha.
+ */
+const CICLO = 5.2; // segundos
+const FIN_SENAL = 60; // % del ciclo en que el haz termina de recorrer "Puls"
+const porPx = FIN_SENAL / t.largoSenal; // % de ciclo por unidad de trazo: misma velocidad en todas las piezas
+
+const pct = (n: number) => `${n.toFixed(2)}%`;
+const panza0 = t.fraccionP * FIN_SENAL;
+const panza1 = panza0 + t.largoPanza * porPx;
+const cola0 = FIN_SENAL + 5;
+const cola1 = cola0 + t.largoCola * porPx * 1.6;
+
+// El haz son tres trazos con la cabeza alineada: halo ancho, cuerpo lima y núcleo blanco.
+const haz = [
+  { cls: 'lf-halo', d: 0.085 },
+  { cls: 'lf-cuerpo', d: 0.05 },
+  { cls: 'lf-nucleo', d: 0.022 },
+];
+/** La cola del haz mide lo mismo en px en todas las piezas, aunque su path sea más corto. */
+const escalaDash = (largo: number) => t.largoSenal / largo;
+
+// Los keyframes llevan números ya calculados: con var()/calc() el navegador no interpola
+// stroke-dashoffset (salta de un extremo al otro).
+const recorrido = (nombre: string, ini: number, fin: number, largo: number) =>
+  haz
+    .map((h) => {
+      const d = h.d * escalaDash(largo);
+      const desde = d.toFixed(4);
+      const hasta = (d - 1 - dmax * escalaDash(largo)).toFixed(4);
+      return `
+@keyframes ${nombre}-${h.cls} {
+  0%, ${pct(ini)} { stroke-dashoffset: ${desde}; opacity: 0; }
+  ${pct(ini + 0.01)} { stroke-dashoffset: ${desde}; opacity: 1; }
+  ${pct(fin)} { stroke-dashoffset: ${hasta}; opacity: 1; }
+  ${pct(fin + 0.01)}, 100% { stroke-dashoffset: ${hasta}; opacity: 0; }
+}`;
+    })
+    .join('');
+
+const piezas = [
+  { d: t.senal, anim: 'lf-senal', largo: t.largoSenal, ini: 0, fin: FIN_SENAL },
+  { d: t.panza, anim: 'lf-panza', largo: t.largoPanza, ini: panza0, fin: panza1 },
+  { d: t.cola, anim: 'lf-cola', largo: t.largoCola, ini: cola0, fin: cola1 },
+];
+const dmax = Math.max(...haz.map((h) => h.d));
+
+const css = `
+.lf-haz path { fill: none; stroke-linecap: round; stroke-linejoin: round; opacity: 0; animation-duration: ${CICLO}s; animation-timing-function: linear; animation-iteration-count: infinite; }
+.lf-halo { stroke: #f26d5b; stroke-width: 34; stroke-opacity: 0.3; }
+.lf-cuerpo { stroke: #c9e85c; stroke-width: 9; }
+.lf-nucleo { stroke: #fff; stroke-width: 4; }
+.lf-o { transform-origin: ${pct((t.o.cx / t.ancho) * 100)} ${pct((t.o.cy / t.alto) * 100)}; animation: lf-latido ${CICLO}s ease-out infinite; }
+.lf-onda { fill: none; stroke-width: 2.5; vector-effect: non-scaling-stroke; transform-box: fill-box; transform-origin: center; opacity: 0; animation: lf-onda ${CICLO}s ease-out infinite; }
+.lf-destello { transform-box: fill-box; transform-origin: center; opacity: 0; animation: lf-destello ${CICLO}s ease-out infinite; }
+${piezas.map((p) => recorrido(p.anim, p.ini, p.fin, p.largo)).join('')}
+@keyframes lf-latido {
+  0%, ${pct(FIN_SENAL - 1)} { transform: scale(1); }
+  ${pct(FIN_SENAL + 3)} { transform: scale(1.06); }
+  ${pct(FIN_SENAL + 9)} { transform: scale(0.99); }
+  ${pct(FIN_SENAL + 14)}, 100% { transform: scale(1); }
+}
+@keyframes lf-onda {
+  0%, ${pct(FIN_SENAL)} { transform: scale(0.9); opacity: 0; }
+  ${pct(FIN_SENAL + 2)} { opacity: 0.85; }
+  ${pct(FIN_SENAL + 30)}, 100% { transform: scale(2.5); opacity: 0; }
+}
+@keyframes lf-destello {
+  0%, ${pct(FIN_SENAL - 1)} { transform: scale(0.4); opacity: 0; }
+  ${pct(FIN_SENAL + 2)} { transform: scale(1.6); opacity: 1; }
+  ${pct(FIN_SENAL + 16)}, 100% { transform: scale(0.6); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lf-svg { display: none; }
+  .lf-o { animation: none; }
+}`;
+
+---
+
+<div class="relative w-full select-none" style={`aspect-ratio:${t.ancho}/${t.alto}`}>
+  <img src="/images/hero/logo-letras.webp" alt="" width={t.ancho} height={t.alto} class="absolute inset-0 h-full w-full" decoding="async" fetchpriority="high" />
+  <img src="/images/hero/logo-o.webp" alt="" width={t.ancho} height={t.alto} class="lf-o absolute inset-0 h-full w-full" decoding="async" />
+  <svg class="lf-svg pointer-events-none absolute inset-0 h-full w-full overflow-visible" viewBox={`0 0 ${t.ancho} ${t.alto}`} aria-hidden="true">
+    {/* Onda que emiten los anillos de la "o" al recibir la señal */}
+    {
+      [
+        { color: '#7c2982', delay: 0 },
+        { color: '#f26d5b', delay: 0.32 },
+        { color: '#7c2982', delay: 0.64 },
+      ].map((o) => <circle class="lf-onda" cx={t.o.cx} cy={t.o.cy} r={t.o.r} stroke={o.color} style={`animation-delay:${o.delay}s`} />)
+    }
+    <circle class="lf-destello" cx={t.o.cx} cy={t.o.cy} r="13" fill="#c9e85c"></circle>
+
+    {
+      piezas.map((p) => (
+        <g class="lf-haz">
+          {haz.map((h) => (
+            <path d={p.d} pathLength="1" class={h.cls} stroke-dasharray={`${(h.d * escalaDash(p.largo)).toFixed(4)} 3`} style={`animation-name:${p.anim}-${h.cls}`} />
+          ))}
+        </g>
+      ))
+    }
+  </svg>
+</div>
+<style is:inline set:html={css}></style>

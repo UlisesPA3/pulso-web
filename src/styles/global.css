@@ -1,0 +1,234 @@
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/outfit";
+@import "@fontsource-variable/jetbrains-mono";
+@import "tailwindcss";
+
+/*
+ * Sistema de diseño PULSO (Tailwind v4: el tema vive aquí, no en tailwind.config.mjs).
+ * Paleta oficial del manual de marca (SPEC-05A). Tema claro como base; el fondo oscuro
+ * (bg-bg-dark) se reserva para la sección Conecta y el Footer.
+ * Uso: bg-primary, text-primary-800, bg-accent-green, bg-bg-light, font-display, shadow-shelf...
+ */
+@theme static {
+  --font-sans: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Outfit Variable", "Outfit", "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Morado PULSO. El oficial es #7c2982 (primary / primary-600); el resto es su escala. */
+  --color-primary: #7c2982;
+  --color-primary-50: #faf5fb;
+  --color-primary-100: #f4e9f6;
+  --color-primary-200: #e8d3ec;
+  --color-primary-300: #d5b0db;
+  --color-primary-400: #bb83c3;
+  --color-primary-500: #9c54a5;
+  --color-primary-600: #7c2982;
+  --color-primary-700: #672270;
+  --color-primary-800: #521c59;
+  --color-primary-900: #3d1643;
+  --color-primary-950: #261c2a;
+  /* Lavanda de la portada (ilustraciones del Hero) */
+  --color-lavender: #efe8fa;
+
+  /* Fondos oficiales y tinta para texto */
+  --color-bg-light: #f5f6f3;
+  --color-bg-dark: #261c2a;
+  --color-ink: #1d1620;
+
+  /* Acentos oficiales */
+  --color-accent-coral: #f26d5b;
+  /* Variantes -dark: mismo tono, oscurecido para texto sobre fondos claros (contraste >= 4.5:1) */
+  --color-accent-coral-dark: #b23a28;
+  --color-accent-green: #c9e85c;
+  --color-accent-lime: #c9e85c;
+  --color-accent-green-dark: #536810;
+  --color-accent-blue: #8ecbe5;
+  --color-accent-sky: #8ecbe5;
+  --color-accent-blue-dark: #256f8f;
+
+  --shadow-shelf: 0 1px 2px rgb(38 28 42 / 0.12), 0 14px 26px -12px rgb(38 28 42 / 0.35), 0 30px 50px -30px rgb(124 41 130 / 0.35);
+  --shadow-lift: 0 26px 50px -18px rgb(38 28 42 / 0.45), 0 44px 80px -36px rgb(124 41 130 / 0.5);
+  --shadow-primary: 0 10px 26px -10px rgb(124 41 130 / 0.6);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@layer base {
+  html {
+    @apply bg-bg-light text-ink font-sans antialiased;
+    scroll-behavior: smooth;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary;
+  }
+
+  ::selection {
+    @apply bg-primary text-white;
+  }
+}
+
+@layer components {
+  .container-pulso {
+    @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+  }
+
+  /* --- Tipografía --- */
+  .text-display {
+    @apply font-display font-extrabold leading-[0.95] tracking-[-0.035em] text-ink;
+  }
+
+  .text-title {
+    @apply font-display font-bold leading-tight tracking-tight text-ink;
+  }
+
+  .eyebrow {
+    @apply font-mono text-xs font-medium uppercase tracking-[0.22em] text-primary;
+  }
+
+  .text-gradient-pulso {
+    @apply bg-linear-to-r from-primary via-primary-500 to-accent-coral bg-clip-text text-transparent;
+  }
+
+  /* --- Botones --- */
+  .btn {
+    @apply inline-flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-full px-6 font-display text-base font-semibold transition-[transform,background-color,border-color,box-shadow,color] duration-200 ease-out-expo select-none active:scale-[0.97];
+  }
+
+  .btn-primary {
+    @apply bg-primary text-white shadow-primary hover:-translate-y-0.5 hover:bg-primary-700;
+  }
+
+  .btn-outline {
+    @apply border-2 border-accent-green bg-white text-primary hover:-translate-y-0.5 hover:bg-accent-green/25;
+  }
+
+  .link-arrow {
+    @apply inline-flex min-h-11 items-center gap-2 font-display font-semibold text-primary transition-colors hover:text-primary-800;
+  }
+
+  /* --- Superficies --- */
+  .surface {
+    @apply rounded-2xl border border-primary-200 bg-white shadow-[0_1px_2px_rgb(38_28_42/0.06)];
+  }
+
+  /*
+   * --- Gravedad cero ---
+   * Tres envoltorios anidados (.zg-x > .zg-y > .zg-r), cada uno con un periodo distinto y
+   * no múltiplo de los otros: la suma traza una deriva tipo Lissajous que tarda minutos en
+   * repetirse, que es lo que hace que la flotación se lea como ingravidez y no como un loop.
+   * Solo transform => corre en el compositor. Se ajusta por elemento con variables:
+   *   --zx / --zy (amplitud), --zr (giro), --zx-d / --zy-d / --zr-d (periodos), --z-delay.
+   */
+  .zg-x {
+    animation: zg-x var(--zx-d, 13s) ease-in-out var(--z-delay, 0s) infinite alternate;
+  }
+
+  .zg-y {
+    animation: zg-y var(--zy-d, 7s) ease-in-out var(--z-delay, 0s) infinite alternate;
+  }
+
+  .zg-r {
+    animation: zg-r var(--zr-d, 17s) ease-in-out var(--z-delay, 0s) infinite alternate;
+  }
+
+  .zg-x,
+  .zg-y,
+  .zg-r {
+    will-change: transform;
+  }
+
+  /* Latido "lub-dub" */
+  .beat {
+    animation: beat 1.6s ease-in-out infinite;
+  }
+
+  .sweep {
+    animation: spin 6s linear infinite;
+  }
+
+  /* Entrada escalonada del Hero: CSS puro, visible también sin JavaScript. */
+  .rise {
+    animation: rise 0.8s var(--ease-out-expo) calc(var(--i, 0) * 90ms + 80ms) both;
+  }
+
+  .corner-in {
+    animation: corner-in 1.4s var(--ease-out-expo) calc(var(--i, 0) * 140ms + 200ms) both;
+  }
+
+  .draw {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: draw 1.4s var(--ease-out-expo) 0.7s forwards;
+  }
+
+  .ecg-run {
+    stroke-dasharray: 0.16 0.84;
+    animation: ecg-run 3.2s linear infinite;
+  }
+}
+
+@keyframes zg-x {
+  from { transform: translate3d(calc(var(--zx, 10px) * -1), 0, 0); }
+  to { transform: translate3d(var(--zx, 10px), 0, 0); }
+}
+
+@keyframes zg-y {
+  from { transform: translate3d(0, calc(var(--zy, 14px) * -1), 0); }
+  to { transform: translate3d(0, var(--zy, 14px), 0); }
+}
+
+@keyframes zg-r {
+  from { transform: rotate(calc(var(--zr, 3deg) * -1)); }
+  to { transform: rotate(var(--zr, 3deg)); }
+}
+
+@keyframes beat {
+  0%, 100% { transform: scale(1); }
+  8% { transform: scale(var(--beat, 1.045)); }
+  16% { transform: scale(1); }
+  26% { transform: scale(calc(1 + (var(--beat, 1.045) - 1) * 0.6)); }
+  38% { transform: scale(1); }
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translate3d(0, 22px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@keyframes corner-in {
+  from { opacity: 0; transform: scale(1.05); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes draw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes ecg-run {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .zg-x,
+  .zg-y,
+  .zg-r,
+  .beat,
+  .sweep,
+  .rise,
+  .corner-in,
+  .ecg-run {
+    animation: none;
+  }
+
+  .draw {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
