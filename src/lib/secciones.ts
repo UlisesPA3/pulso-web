@@ -91,44 +91,66 @@ export const secciones = [
 export type SlugSeccion = (typeof secciones)[number]['slug'];
 
 /**
- * Clases por acento. Van escritas completas para que Tailwind las detecte.
- * Lima y azul cielo no dan contraste como texto sobre blanco: sus etiquetas usan la
- * variante oscura del mismo tono (accent-green-dark / accent-blue-dark).
+ * Bento de "Dentro de PULSO" (SPEC-06B): qué secciones se expanden. El resto son celdas 1x1.
+ *   grande: 2x2 en escritorio (2x1 en tablet).   ancha: 2x1 en escritorio.
+ *   anchaTablet: solo en tablet ocupa las 2 columnas, para cerrar el rectángulo.
+ * Con 2 grandes + 1 ancha + 6 normales se llenan exactamente 4 columnas x 4 filas, y en
+ * tablet 2 columnas x 6 filas. Si cambias el reparto, vuelve a cuadrar esas cuentas.
  */
-export const ACENTOS: Record<Acento, { linea: string; pastel: string; icono: string; etiqueta: string; cabecera: string }> = {
+export type TamanoBento = 'grande' | 'ancha' | 'anchaTablet' | 'normal';
+
+export const BENTO: Partial<Record<SlugSeccion, TamanoBento>> = {
+  'radar-biomed': 'grande',
+  'en-profundidad': 'ancha',
+  'despues-de-la-carrera': 'grande',
+  'dosis-extra': 'anchaTablet',
+};
+
+/**
+ * Clases por acento, pensadas para el fondo espacial oscuro (SPEC-06A). Van escritas
+ * completas para que Tailwind las detecte. Sobre oscuro los acentos sirven tal cual como
+ * texto; el morado usa su tono 300 y "oscuro" pasa a ser lavanda clara para no perderse.
+ * `halo` es el color del resplandor de las tarjetas expandidas del bento (SPEC-06B).
+ */
+export const ACENTOS: Record<Acento, { linea: string; pastel: string; icono: string; etiqueta: string; cabecera: string; halo: string }> = {
   morado: {
-    linea: 'bg-primary',
-    pastel: 'bg-primary-100',
-    icono: 'text-primary',
-    etiqueta: 'text-primary',
-    cabecera: 'from-primary-100 via-primary-50 to-white',
+    linea: 'bg-primary-400',
+    pastel: 'bg-primary-400/20',
+    icono: 'text-primary-300',
+    etiqueta: 'text-primary-300',
+    cabecera: 'from-primary-500/60 via-primary-700/40 to-primary-900/20',
+    halo: 'from-primary-500/40',
   },
   coral: {
     linea: 'bg-accent-coral',
     pastel: 'bg-accent-coral/15',
-    icono: 'text-accent-coral-dark',
-    etiqueta: 'text-accent-coral-dark',
-    cabecera: 'from-accent-coral/25 via-accent-coral/10 to-white',
+    icono: 'text-accent-coral',
+    etiqueta: 'text-accent-coral',
+    cabecera: 'from-accent-coral/40 via-accent-coral/15 to-primary-900/20',
+    halo: 'from-accent-coral/25',
   },
   cielo: {
     linea: 'bg-accent-blue',
-    pastel: 'bg-accent-blue/25',
-    icono: 'text-accent-blue-dark',
-    etiqueta: 'text-accent-blue-dark',
-    cabecera: 'from-accent-blue/40 via-accent-blue/15 to-white',
+    pastel: 'bg-accent-blue/15',
+    icono: 'text-accent-blue',
+    etiqueta: 'text-accent-blue',
+    cabecera: 'from-accent-blue/35 via-accent-blue/15 to-primary-900/20',
+    halo: 'from-accent-blue/25',
   },
   lima: {
     linea: 'bg-accent-green',
-    pastel: 'bg-accent-green/30',
-    icono: 'text-accent-green-dark',
-    etiqueta: 'text-accent-green-dark',
-    cabecera: 'from-accent-green/45 via-accent-green/15 to-white',
+    pastel: 'bg-accent-green/15',
+    icono: 'text-accent-green',
+    etiqueta: 'text-accent-green',
+    cabecera: 'from-accent-green/30 via-accent-green/10 to-primary-900/20',
+    halo: 'from-accent-green/20',
   },
   oscuro: {
-    linea: 'bg-bg-dark',
-    pastel: 'bg-bg-dark/10',
-    icono: 'text-bg-dark',
-    etiqueta: 'text-bg-dark',
-    cabecera: 'from-bg-dark/20 via-bg-dark/5 to-white',
+    linea: 'bg-lavender',
+    pastel: 'bg-white/10',
+    icono: 'text-lavender',
+    etiqueta: 'text-lavender',
+    cabecera: 'from-white/20 via-white/10 to-primary-900/20',
+    halo: 'from-white/15',
   },
 };

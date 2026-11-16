@@ -6,20 +6,20 @@ const pilares = [
   {
     titulo: 'DIVULGAMOS',
     texto: 'Ciencia, investigación e innovación biomédica.',
-    fondo: 'bg-primary-100/70',
-    color: 'text-primary-800',
+    fondo: 'bg-primary-400/15 ring-1 ring-primary-400/30',
+    color: 'text-primary-300',
   },
   {
     titulo: 'CONECTAMOS',
     texto: 'Estudiantes, academia y comunidades científicas.',
-    fondo: 'bg-accent-green/25',
-    color: 'text-accent-green-dark',
+    fondo: 'bg-accent-green/10 ring-1 ring-accent-green/30',
+    color: 'text-accent-green',
   },
   {
     titulo: 'IMPULSAMOS',
     texto: 'Oportunidades de formación y desarrollo profesional.',
-    fondo: 'bg-accent-coral/15',
-    color: 'text-accent-coral-dark',
+    fondo: 'bg-accent-coral/10 ring-1 ring-accent-coral/30',
+    color: 'text-accent-coral',
   },
 ];
 
@@ -29,14 +29,14 @@ const logos = [
 ];
 ---
 
-<section id="sobre-nosotros" class="scroll-mt-20 bg-white py-16 sm:py-24" aria-labelledby="nosotros-titulo">
+<section id="sobre-nosotros" class="band scroll-mt-20 py-16 sm:py-24" aria-labelledby="nosotros-titulo">
   <div class="container-pulso grid items-center gap-12 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-16">
     <div data-reveal="children">
-      <p class="font-display text-sm font-extrabold tracking-[0.2em] text-accent-coral-dark uppercase">Sobre nosotros</p>
+      <p class="font-display text-sm font-extrabold tracking-[0.2em] text-accent-coral uppercase">Sobre nosotros</p>
       <h2 id="nosotros-titulo" class="text-display mt-4 text-4xl text-balance sm:text-5xl">
         Una revista hecha por estudiantes, para conectar estudiantes.
       </h2>
-      <p class="mt-6 text-lg leading-relaxed text-ink/75">
+      <p class="mt-6 text-lg leading-relaxed text-primary-100">
         PULSO es una revista biomédica universitaria que nace como una iniciativa de NEXUS, impulsada por estudiantes de Ingeniería Biomédica del Tecnológico de Monterrey, Campus Ciudad de México. Nuestro propósito es acercar la investigación, la ciencia y la innovación biomédica a través de contenidos claros, visuales y accesibles. Buscamos dar visibilidad a proyectos y experiencias estudiantiles, compartir oportunidades de desarrollo académico y profesional, y fortalecer los vínculos entre estudiantes y comunidades científicas a nivel local, nacional e internacional.
       </p>
       <ul class="mt-8 grid gap-3 sm:grid-cols-3">
@@ -44,19 +44,19 @@ const logos = [
           pilares.map((p) => (
             <li class={`rounded-2xl p-5 ${p.fondo}`}>
               <h3 class={`font-display text-sm font-extrabold tracking-[0.12em] ${p.color}`}>{p.titulo}</h3>
-              <p class="mt-2 text-[0.95rem] leading-snug text-ink/80">{p.texto}</p>
+              <p class="mt-2 text-[0.95rem] leading-snug text-primary-100">{p.texto}</p>
             </li>
           ))
         }
       </ul>
     </div>
 
-    <div class="rounded-3xl bg-lavender p-6 sm:p-9" data-reveal>
-      <h3 class="text-center font-display text-lg font-extrabold tracking-[0.24em] text-primary uppercase">Comunidad</h3>
+    <div class="surface rounded-3xl p-6 sm:p-9" data-reveal>
+      <h3 class="text-center font-display text-lg font-extrabold tracking-[0.24em] text-primary-200 uppercase">Comunidad</h3>
       <ul class="mt-6 grid gap-5">
         {
           logos.map((l) => (
-            <li class="flex items-center justify-center rounded-2xl bg-white px-6 py-5 shadow-[0_1px_2px_rgb(38_28_42/0.06),0_14px_28px_-18px_rgb(124_41_130/0.45)]">
+            <li class="flex items-center justify-center rounded-2xl bg-white px-6 py-5 shadow-[0_14px_28px_-18px_rgb(0_0_0/0.8)]">
               <img src={l.src} alt={l.alt} width={l.ancho} height={l.alto} loading="lazy" decoding="async" class={`h-auto w-auto max-w-full object-contain ${l.clase}`} />
             </li>
           ))

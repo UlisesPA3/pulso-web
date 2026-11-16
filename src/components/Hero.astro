@@ -3,11 +3,11 @@ import ZeroGCorners from './React/hero/ZeroGCorners';
 import LogoFrecuencia from './LogoFrecuencia.astro';
 ---
 
-{/* Portada: réplica viva de public/images/Portada.png (lavanda clara, logo al centro, cuatro esquinas flotando). */}
-<section class="relative isolate flex min-h-[calc(100svh-4rem)] flex-col overflow-hidden bg-[#faf8fd] sm:min-h-[min(calc(100svh-4rem),58vw)]" aria-labelledby="hero-titulo">
-  {/* Bruma lavanda en las esquinas, centro casi blanco */}
+{/* Portada: réplica viva de public/images/Portada.png sobre el fondo espacial (SPEC-06A): logo al centro y cuatro esquinas flotando. */}
+<section class="relative isolate flex min-h-[calc(100svh-4rem)] flex-col overflow-hidden sm:min-h-[min(calc(100svh-4rem),58vw)]" aria-labelledby="hero-titulo">
+  {/* Nebulosa morada en las esquinas; el centro queda oscuro para que el logo destaque */}
   <div
-    class="absolute inset-0 -z-10 bg-[radial-gradient(60%_60%_at_0%_0%,var(--color-lavender),transparent_70%),radial-gradient(55%_65%_at_100%_0%,var(--color-lavender),transparent_70%),radial-gradient(60%_55%_at_0%_100%,var(--color-lavender),transparent_70%),radial-gradient(70%_50%_at_100%_100%,var(--color-lavender),transparent_70%)]"
+    class="absolute inset-0 -z-10 bg-[radial-gradient(60%_60%_at_0%_0%,rgb(124_41_130/0.5),transparent_70%),radial-gradient(55%_65%_at_100%_0%,rgb(103_34_112/0.4),transparent_70%),radial-gradient(60%_55%_at_0%_100%,rgb(103_34_112/0.5),transparent_70%),radial-gradient(70%_50%_at_100%_100%,rgb(124_41_130/0.4),transparent_70%)]"
     aria-hidden="true"
   >
   </div>
@@ -21,16 +21,16 @@ import LogoFrecuencia from './LogoFrecuencia.astro';
     </h1>
 
     <p class="rise mt-6 flex items-center gap-4 sm:mt-[2.2vw] sm:gap-[3vw]" style="--i:2" aria-hidden="true">
-      <span class="h-7 w-2 border-2 border-r-0 border-primary sm:h-[2.4vw] sm:w-[0.7vw]"></span>
-      <span class="font-mono text-xs font-medium tracking-[0.14em] whitespace-nowrap text-ink uppercase sm:text-[clamp(0.8rem,1.3vw,1.35rem)] sm:tracking-[0.12em]">Revista Biomédica Universitaria</span>
-      <span class="h-7 w-2 border-2 border-l-0 border-primary sm:h-[2.4vw] sm:w-[0.7vw]"></span>
+      <span class="h-7 w-2 border-2 border-r-0 border-primary-300 sm:h-[2.4vw] sm:w-[0.7vw]"></span>
+      <span class="font-mono text-xs font-medium tracking-[0.14em] whitespace-nowrap text-white uppercase sm:text-[clamp(0.8rem,1.3vw,1.35rem)] sm:tracking-[0.12em]">Revista Biomédica Universitaria</span>
+      <span class="h-7 w-2 border-2 border-l-0 border-primary-300 sm:h-[2.4vw] sm:w-[0.7vw]"></span>
     </p>
   </div>
 
   {/* En móvil, un velo bajo el lema para que se lea sobre el microscopio */}
-  <div class="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-linear-to-t from-[#faf8fd] to-transparent sm:hidden" aria-hidden="true"></div>
+  <div class="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-linear-to-t from-space to-transparent sm:hidden" aria-hidden="true"></div>
 
-  <p class="rise relative px-4 pb-6 text-center font-display text-xs font-bold tracking-[0.3em] whitespace-nowrap text-primary uppercase sm:pb-7 sm:text-sm sm:tracking-[0.42em]" style="--i:4">
+  <p class="rise relative px-4 pb-6 text-center font-display text-xs font-bold tracking-[0.3em] whitespace-nowrap text-primary-200 uppercase sm:pb-7 sm:text-sm sm:tracking-[0.42em]" style="--i:4">
     Una iniciativa de NEXUS EMBS
   </p>
 

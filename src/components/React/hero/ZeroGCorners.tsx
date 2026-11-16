@@ -23,6 +23,10 @@ const loadFeatures = () => import('../../../lib/motion-features').then((mod) => 
  *  2. Paralaje: Motion. Puntero y scroll pasan por un resorte muy blando y cada esquina se
  *     desplaza según su profundidad. Solo con puntero fino y sin "reducir movimiento".
  *
+ * Fondo oscuro (SPEC-06A): los recortes son tinta morada oscura con transparencia, pensados
+ * para papel claro. `invert` + `hue-rotate-180` invierte la luminosidad conservando el tono,
+ * así la misma tinta se vuelve lavanda luminosa sobre el fondo espacial sin tocar los archivos.
+ *
  * Las esquinas de abajo sobresalen del Hero (-bottom-5, sm:-bottom-10) y las de arriba traen
  * el borde exterior difuminado: al moverse nunca se ve el canto recto del recorte.
  */
@@ -57,6 +61,15 @@ export default function ZeroGCorners() {
   return (
     <LazyMotion features={loadFeatures} strict>
       <div ref={ref} aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden select-none">
+        {/* Realce del corazón: su tinta es muy translúcida (era lavanda clara sobre papel) y
+            sobre oscuro se perdía. Este filtro solo sube la opacidad (gamma en el canal alfa). */}
+        <svg className="absolute h-0 w-0" focusable="false">
+          <filter id="zg-realce" colorInterpolationFilters="sRGB">
+            <feComponentTransfer>
+              <feFuncA type="gamma" amplitude="1" exponent="0.5" offset="0" />
+            </feComponentTransfer>
+          </filter>
+        </svg>
         {/* Abajo-derecha: ondas finas y red molecular. La más lejana: lenta y orgánica. */}
         <Capa {...capa} i={3} depth={0.35} abajo className="-right-5 -bottom-5 w-[135%] sm:-right-10 sm:-bottom-10 sm:w-[calc(62%+2.5rem)]">
           <Lienzo esquina="br">
@@ -79,7 +92,7 @@ export default function ZeroGCorners() {
         <Capa {...capa} i={1} depth={1} tilt className="top-0 right-0 w-[58%] sm:w-[30.5%]">
           <Lienzo esquina="tr">
             <Pieza src="tr-red" esquina="tr" zx={6} zy={8} zr={0.8} dx={21} dy={12} dr={27} delay={-5} />
-            <Pieza src="tr-corazon" esquina="tr" zx={9} zy={14} zr={2.2} dx={13} dy={7} dr={19} delay={-3.5} origen="55.7% 44%" late prioridad />
+            <Pieza src="tr-corazon" esquina="tr" zx={9} zy={14} zr={2.2} dx={13} dy={7} dr={19} delay={-3.5} origen="55.7% 44%" late realce prioridad />
           </Lienzo>
         </Capa>
 
@@ -158,10 +171,12 @@ interface PiezaProps {
   origen?: string;
   /** Latido "lub-dub" muy leve (el corazón). */
   late?: boolean;
+  /** Sube la opacidad de la tinta (filtro #zg-realce) para piezas muy translúcidas. */
+  realce?: boolean;
   prioridad?: boolean;
 }
 
-function Pieza({ src, esquina, zx, zy, zr, dx, dy, dr, delay, origen = '50% 50%', late = false, prioridad = false }: PiezaProps) {
+function Pieza({ src, esquina, zx, zy, zr, dx, dy, dr, delay, origen = '50% 50%', late = false, realce = false, prioridad = false }: PiezaProps) {
   const { ancho, alto } = heroCapas[esquina];
   const style = {
     '--zx': `${zx}px`,
@@ -184,7 +199,7 @@ function Pieza({ src, esquina, zx, zy, zr, dx, dy, dr, delay, origen = '50% 50%'
             decoding="async"
             fetchPriority={prioridad ? 'high' : 'auto'}
             draggable={false}
-            className={`h-full w-full ${late ? 'beat' : ''}`}
+            className={`h-full w-full ${realce ? '[filter:url(#zg-realce)_invert(1)_hue-rotate(180deg)]' : 'hue-rotate-180 invert'} ${late ? 'beat' : ''}`}
             style={late ? ({ transformOrigin: origen, '--beat': 1.02 } as CSSProperties) : undefined}
           />
         </div>

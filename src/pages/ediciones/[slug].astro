@@ -35,7 +35,7 @@ const { Content } = await render(edicion);
       Vol. {volumen} · Núm. {numero} · <time>{fecha}</time>
     </p>
     <h1 class="text-display rise mt-4 text-4xl text-balance sm:text-6xl" style="--i:1">{titulo}</h1>
-    <p class="rise mt-5 text-lg text-ink/75" style="--i:2">{resumen}</p>
+    <p class="rise mt-5 text-lg text-primary-100" style="--i:2">{resumen}</p>
   </header>
 
   <section class="mt-10" aria-labelledby="visor-titulo">
@@ -47,30 +47,30 @@ const { Content } = await render(edicion);
           <VisorPDF client:only="react" url={archivoPdf} titulo={titulo}>
             <div
               slot="fallback"
-              class="mx-auto flex aspect-[3/4] w-full max-w-2xl animate-pulse items-center justify-center rounded-lg border border-primary-200 bg-white text-sm text-ink/70 sm:aspect-[3/2]"
+              class="mx-auto flex aspect-[3/4] w-full max-w-2xl animate-pulse items-center justify-center rounded-lg border border-white/10 bg-white/[0.06] text-sm text-primary-100 sm:aspect-[3/2]"
             >
               Cargando el visor…
             </div>
           </VisorPDF>
           <noscript>
-            <p class="mt-4 text-center text-ink/70">
-              El visor necesita JavaScript. <a class="text-primary underline" href={archivoPdf}>Abre el PDF directamente</a>.
+            <p class="mt-4 text-center text-primary-100">
+              El visor necesita JavaScript. <a class="text-accent-green underline" href={archivoPdf}>Abre el PDF directamente</a>.
             </p>
           </noscript>
         </>
       ) : (
         <div class="surface px-6 py-12 text-center">
           <p class="text-title text-xl">El PDF de esta edición aún no está disponible</p>
-          <p class="mt-2 text-ink/70">Lo publicaremos aquí en cuanto esté listo. Mientras tanto, puedes leer los números anteriores.</p>
+          <p class="mt-2 text-primary-100">Lo publicaremos aquí en cuanto esté listo. Mientras tanto, puedes leer los números anteriores.</p>
           <a href="/ediciones" class="btn btn-outline mt-6">Ir a la hemeroteca</a>
         </div>
       )
     }
   </section>
 
-  <section class="mt-14 max-w-3xl border-t border-primary-200 pt-10" aria-labelledby="carta-editorial">
+  <section class="mt-14 max-w-3xl border-t border-white/10 pt-10" aria-labelledby="carta-editorial">
     <h2 id="carta-editorial" class="text-title text-2xl">Carta editorial</h2>
-    <div class="mt-4 space-y-4 leading-relaxed text-ink/75">
+    <div class="mt-4 space-y-4 leading-relaxed text-primary-100">
       <Content />
     </div>
   </section>

@@ -244,7 +244,10 @@ El generador propuso un sistema claro, negro + rosa. La marca PULSO ya estaba de
 | Movimiento | Stagger 300–450 ms | Entradas escalonadas 90 ms, revelado al scroll, flotación "gravedad cero" en el Hero |
 
 - Los tokens viven en `src/styles/global.css` (`@theme static`). No hay colores sueltos salvo en degradados puntuales.
-- Tema claro como base (SPEC-05A). `bg-bg-dark` solo en el Footer y la sección Conecta.
-- Sobre fondo claro, lima y azul cielo no sirven para texto: usar `accent-green-dark` / `accent-blue-dark` o morado.
-- Clases base: `.text-display`, `.text-title`, `.eyebrow`, `.text-gradient-pulso`, `.btn` + `.btn-primary` / `.btn-outline`, `.link-arrow`, `.surface`.
+- Tema oscuro espacial como base (SPEC-06A): fondo `bg-space` (`#1a1025`) con estrellas; sin fondos blancos en contenedores principales.
+- Texto: `text-white` (títulos), `text-primary-100` (cuerpo), `text-primary-200` (secundario). Lima, coral y azul cielo sirven como texto sobre oscuro; el morado de texto es `primary-300`. Las variantes `accent-*-dark` quedan solo para superficies claras.
+- "Dentro de PULSO" es un bento asimétrico (SPEC-06B): 4 columnas en escritorio, 2 en tablet, 1 en móvil. Qué tarjeta se expande se decide en `BENTO` (`src/lib/secciones.ts`); las clases por tamaño están en `TAMANOS` (`src/pages/index.astro`). El reparto debe sumar un rectángulo completo.
+- "También en ediciones pasadas" es una isla React (`src/components/React/CarruselEdiciones.tsx`, SPEC-06C): carrusel con scroll nativo y snap (4 tarjetas en ≥1280 px, 3 / 2 / 1 por debajo) que "Ver todas" despliega en cuadrícula. Recibe datos planos desde `index.astro`; el ícono lo resuelve por slug.
+- Superficies: `.surface` (cristal oscuro) y `.band` (banda de sección). Sin `backdrop-blur` en tarjetas (rendimiento); solo el Header lo usa.
+- Clases base: `.text-display`, `.text-title`, `.eyebrow`, `.text-gradient-pulso`, `.btn` + `.btn-primary` / `.btn-outline`, `.link-arrow`, `.surface`, `.band`.
 - Movimiento: solo `transform` y `opacity`; todo se apaga con `prefers-reduced-motion`.

@@ -2,7 +2,8 @@
 import { logoTrazo as t } from '../lib/logo-pulso-trazo';
 
 /**
- * Logo original de PULSO (recorte sin fondo) con una señal que lo recorre.
+ * Logo original de PULSO (recorte sin fondo) con una señal que lo recorre. Sobre el fondo
+ * espacial se pinta en blanco con un filtro (brightness-0 invert): el archivo no cambia.
  *
  * Las imágenes son el logo real; encima va un SVG con el eje exacto del trazo
  * (scripts/logo_pulso.py), en el mismo sistema de coordenadas. Un haz viaja por ese eje:
@@ -86,15 +87,15 @@ ${piezas.map((p) => recorrido(p.anim, p.ini, p.fin, p.largo)).join('')}
 ---
 
 <div class="relative w-full select-none" style={`aspect-ratio:${t.ancho}/${t.alto}`}>
-  <img src="/images/hero/logo-letras.webp" alt="" width={t.ancho} height={t.alto} class="absolute inset-0 h-full w-full" decoding="async" fetchpriority="high" />
-  <img src="/images/hero/logo-o.webp" alt="" width={t.ancho} height={t.alto} class="lf-o absolute inset-0 h-full w-full" decoding="async" />
+  <img src="/images/hero/logo-letras.webp" alt="" width={t.ancho} height={t.alto} class="absolute inset-0 h-full w-full brightness-0 invert" decoding="async" fetchpriority="high" />
+  <img src="/images/hero/logo-o.webp" alt="" width={t.ancho} height={t.alto} class="lf-o absolute inset-0 h-full w-full brightness-0 invert" decoding="async" />
   <svg class="lf-svg pointer-events-none absolute inset-0 h-full w-full overflow-visible" viewBox={`0 0 ${t.ancho} ${t.alto}`} aria-hidden="true">
     {/* Onda que emiten los anillos de la "o" al recibir la señal */}
     {
       [
-        { color: '#7c2982', delay: 0 },
+        { color: '#d5b0db', delay: 0 },
         { color: '#f26d5b', delay: 0.32 },
-        { color: '#7c2982', delay: 0.64 },
+        { color: '#d5b0db', delay: 0.64 },
       ].map((o) => <circle class="lf-onda" cx={t.o.cx} cy={t.o.cy} r={t.o.r} stroke={o.color} style={`animation-delay:${o.delay}s`} />)
     }
     <circle class="lf-destello" cx={t.o.cx} cy={t.o.cy} r="13" fill="#c9e85c"></circle>

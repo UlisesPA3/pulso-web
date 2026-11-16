@@ -5,9 +5,10 @@
 
 /*
  * Sistema de diseño PULSO (Tailwind v4: el tema vive aquí, no en tailwind.config.mjs).
- * Paleta oficial del manual de marca (SPEC-05A). Tema claro como base; el fondo oscuro
- * (bg-bg-dark) se reserva para la sección Conecta y el Footer.
- * Uso: bg-primary, text-primary-800, bg-accent-green, bg-bg-light, font-display, shadow-shelf...
+ * Paleta oficial del manual de marca (SPEC-05A) sobre tema oscuro (SPEC-06A): todo el sitio
+ * vive sobre el morado espacial (bg-space) con cielo estrellado; el texto va en blanco y
+ * lavanda (text-white, text-primary-100/200) y los acentos lima, coral y azul sirven de texto.
+ * Uso: bg-space, text-primary-100, bg-accent-green, font-display, shadow-shelf, .surface...
  */
 @theme static {
   --font-sans: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
@@ -33,11 +34,14 @@
   /* Fondos oficiales y tinta para texto */
   --color-bg-light: #f5f6f3;
   --color-bg-dark: #261c2a;
+  /* Morado espacial: fondo global del sitio (más profundo que bg-dark, que queda para paneles) */
+  --color-space: #1a1025;
   --color-ink: #1d1620;
 
   /* Acentos oficiales */
   --color-accent-coral: #f26d5b;
-  /* Variantes -dark: mismo tono, oscurecido para texto sobre fondos claros (contraste >= 4.5:1) */
+  /* Variantes -dark: solo para texto sobre superficies claras (tarjetas blancas). Sobre el
+     fondo espacial se usan los acentos tal cual: todos superan 4.5:1. */
   --color-accent-coral-dark: #b23a28;
   --color-accent-green: #c9e85c;
   --color-accent-lime: #c9e85c;
@@ -46,9 +50,10 @@
   --color-accent-sky: #8ecbe5;
   --color-accent-blue-dark: #256f8f;
 
-  --shadow-shelf: 0 1px 2px rgb(38 28 42 / 0.12), 0 14px 26px -12px rgb(38 28 42 / 0.35), 0 30px 50px -30px rgb(124 41 130 / 0.35);
-  --shadow-lift: 0 26px 50px -18px rgb(38 28 42 / 0.45), 0 44px 80px -36px rgb(124 41 130 / 0.5);
-  --shadow-primary: 0 10px 26px -10px rgb(124 41 130 / 0.6);
+  /* Sobre oscuro la sombra negra apenas se ve: la elevación se lee por el halo morado. */
+  --shadow-shelf: 0 1px 2px rgb(0 0 0 / 0.4), 0 14px 26px -12px rgb(0 0 0 / 0.7), 0 30px 50px -28px rgb(156 84 165 / 0.6);
+  --shadow-lift: 0 26px 50px -18px rgb(0 0 0 / 0.75), 0 44px 80px -32px rgb(187 131 195 / 0.55);
+  --shadow-primary: 0 10px 28px -10px rgb(187 131 195 / 0.65);
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -56,16 +61,79 @@
 
 @layer base {
   html {
-    @apply bg-bg-light text-ink font-sans antialiased;
+    @apply bg-space text-primary-100 font-sans antialiased;
+    color-scheme: dark;
     scroll-behavior: smooth;
   }
 
+  /*
+   * --- Fondo espacial (SPEC-06A) ---
+   * Dos capas fijas detrás de todo el contenido (las secciones no llevan fondo opaco):
+   *   ::before  nebulosa morada + estrellas lejanas, estática.
+   *   ::after   estrellas cercanas y motas de color: titilan y derivan hacia arriba muy
+   *             despacio. La capa mide un mosaico (320px) más que la ventana y sube justo
+   *             esa distancia, así que el bucle no tiene salto. Solo opacity + transform.
+   */
+  body::before,
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  body::before {
+    background-image:
+      radial-gradient(60% 50% at 12% 0%, rgb(124 41 130 / 0.32), transparent 70%),
+      radial-gradient(50% 45% at 92% 22%, rgb(103 34 112 / 0.3), transparent 70%),
+      radial-gradient(55% 50% at 70% 100%, rgb(142 203 229 / 0.1), transparent 70%),
+      radial-gradient(45% 40% at 0% 85%, rgb(242 109 91 / 0.08), transparent 70%),
+      radial-gradient(1.5px 1.5px at 169px 81px, rgb(255 255 255 / 0.35) 50%, transparent 51%),
+      radial-gradient(1px 1px at 41px 278px, rgb(255 255 255 / 0.6) 50%, transparent 51%),
+      radial-gradient(1px 1px at 302px 33px, rgb(255 255 255 / 0.35) 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 48px 226px, rgb(255 255 255 / 0.35) 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 127px 50px, rgb(255 255 255 / 0.35) 50%, transparent 51%),
+      radial-gradient(1px 1px at 293px 67px, rgb(255 255 255 / 0.35) 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 299px 303px, rgb(255 255 255 / 0.35) 50%, transparent 51%),
+      radial-gradient(1px 1px at 117px 27px, rgb(255 255 255 / 0.6) 50%, transparent 51%),
+      radial-gradient(1px 1px at 218px 77px, rgb(255 255 255 / 0.6) 50%, transparent 51%),
+      radial-gradient(1px 1px at 290px 353px, rgb(255 255 255 / 0.35) 50%, transparent 51%),
+      radial-gradient(1px 1px at 301px 296px, rgb(255 255 255 / 0.6) 50%, transparent 51%),
+      radial-gradient(1px 1px at 53px 284px, rgb(255 255 255 / 0.35) 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 320px 109px, rgb(255 255 255 / 0.75) 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 401px 164px, rgb(255 255 255 / 0.75) 50%, transparent 51%),
+      radial-gradient(1px 1px at 189px 157px, rgb(255 255 255 / 0.5) 50%, transparent 51%),
+      radial-gradient(1px 1px at 361px 403px, rgb(255 255 255 / 0.35) 50%, transparent 51%);
+    background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 420px 420px, 420px 420px, 420px 420px, 420px 420px, 420px 420px, 420px 420px, 420px 420px, 420px 420px, 420px 420px, 420px 420px, 420px 420px, 420px 420px, 420px 420px, 420px 420px, 420px 420px, 420px 420px;
+  }
+
+  body::after {
+    bottom: auto;
+    height: calc(100lvh + 320px);
+    background-image:
+      radial-gradient(1.5px 1.5px at 311px 272px, rgb(255 255 255 / 0.7) 50%, transparent 51%),
+      radial-gradient(2px 2px at 463px 151px, rgb(255 255 255 / 0.55) 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 124px 266px, rgb(255 255 255 / 0.55) 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 354px 81px, rgb(255 255 255 / 0.7) 50%, transparent 51%),
+      radial-gradient(2px 2px at 44px 43px, rgb(255 255 255 / 0.9) 50%, transparent 51%),
+      radial-gradient(2px 2px at 325px 178px, rgb(255 255 255 / 0.7) 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 512px 300px, rgb(255 255 255 / 0.55) 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 99px 142px, rgb(255 255 255 / 0.9) 50%, transparent 51%),
+      radial-gradient(2px 2px at 70px 35px, rgb(255 255 255 / 0.9) 50%, transparent 51%),
+      radial-gradient(2px 2px at 140px 96px, rgb(201 232 92 / 0.8) 50%, transparent 51%),
+      radial-gradient(2px 2px at 430px 250px, rgb(142 203 229 / 0.85) 50%, transparent 51%);
+    background-size: 560px 320px;
+    animation: star-twinkle 7s ease-in-out infinite alternate, star-drift 140s linear infinite;
+    will-change: transform, opacity;
+  }
+
   :focus-visible {
-    @apply outline-2 outline-offset-2 outline-primary;
+    @apply outline-2 outline-offset-2 outline-accent-green;
   }
 
   ::selection {
-    @apply bg-primary text-white;
+    @apply bg-primary-500 text-white;
   }
 }
 
@@ -76,19 +144,19 @@
 
   /* --- Tipografía --- */
   .text-display {
-    @apply font-display font-extrabold leading-[0.95] tracking-[-0.035em] text-ink;
+    @apply font-display font-extrabold leading-[0.95] tracking-[-0.035em] text-white;
   }
 
   .text-title {
-    @apply font-display font-bold leading-tight tracking-tight text-ink;
+    @apply font-display font-bold leading-tight tracking-tight text-white;
   }
 
   .eyebrow {
-    @apply font-mono text-xs font-medium uppercase tracking-[0.22em] text-primary;
+    @apply font-mono text-xs font-medium uppercase tracking-[0.22em] text-accent-green;
   }
 
   .text-gradient-pulso {
-    @apply bg-linear-to-r from-primary via-primary-500 to-accent-coral bg-clip-text text-transparent;
+    @apply bg-linear-to-r from-primary-300 via-accent-coral to-accent-green bg-clip-text text-transparent;
   }
 
   /* --- Botones --- */
@@ -97,20 +165,28 @@
   }
 
   .btn-primary {
-    @apply bg-primary text-white shadow-primary hover:-translate-y-0.5 hover:bg-primary-700;
+    @apply bg-primary-500 text-white shadow-primary hover:-translate-y-0.5 hover:bg-primary-600;
   }
 
   .btn-outline {
-    @apply border-2 border-accent-green bg-white text-primary hover:-translate-y-0.5 hover:bg-accent-green/25;
+    @apply border-2 border-accent-green bg-white/5 text-white hover:-translate-y-0.5 hover:bg-accent-green hover:text-ink;
   }
 
   .link-arrow {
-    @apply inline-flex min-h-11 items-center gap-2 font-display font-semibold text-primary transition-colors hover:text-primary-800;
+    @apply inline-flex min-h-11 items-center gap-2 font-display font-semibold text-primary-200 transition-colors hover:text-white;
   }
 
   /* --- Superficies --- */
+  /* Cristal oscuro: deja pasar el cielo estrellado. El texto encima va en blanco/lavanda.
+     Sin backdrop-blur a propósito: con las estrellas animadas detrás, desenfocar decenas de
+     tarjetas en cada fotograma tira el rendimiento en móvil. El blur queda solo en el Header. */
   .surface {
-    @apply rounded-2xl border border-primary-200 bg-white shadow-[0_1px_2px_rgb(38_28_42/0.06)];
+    @apply rounded-2xl border border-white/10 bg-white/[0.06] shadow-[0_1px_2px_rgb(0_0_0/0.3)];
+  }
+
+  /* Banda de sección: un velo apenas más claro para dar ritmo sin tapar las estrellas. */
+  .band {
+    @apply border-y border-white/10 bg-white/[0.03];
   }
 
   /*
@@ -169,6 +245,16 @@
   }
 }
 
+@keyframes star-twinkle {
+  from { opacity: 0.45; }
+  to { opacity: 1; }
+}
+
+@keyframes star-drift {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(0, -320px, 0); }
+}
+
 @keyframes zg-x {
   from { transform: translate3d(calc(var(--zx, 10px) * -1), 0, 0); }
   to { transform: translate3d(var(--zx, 10px), 0, 0); }
@@ -214,6 +300,10 @@
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  body::after {
+    animation: none;
   }
 
   .zg-x,

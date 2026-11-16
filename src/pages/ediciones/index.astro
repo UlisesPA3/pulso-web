@@ -10,14 +10,14 @@ const ediciones = await getEdicionesPublicadas();
   <header class="max-w-3xl">
     <p class="eyebrow rise" style="--i:0">Hemeroteca · {ediciones.length} {ediciones.length === 1 ? 'edición' : 'ediciones'}</p>
     <h1 class="text-display rise mt-4 text-5xl sm:text-7xl" style="--i:1">Todos los <span class="text-gradient-pulso">latidos</span></h1>
-    <p class="rise mt-5 text-lg text-ink/75" style="--i:2">Cada número de PULSO, del más reciente al más antiguo.</p>
+    <p class="rise mt-5 text-lg text-primary-100" style="--i:2">Cada número de PULSO, del más reciente al más antiguo.</p>
   </header>
 
   {
     ediciones.length === 0 ? (
       <div class="surface mt-12 p-8 text-center">
         <p class="text-title text-xl">Aún no hay ediciones publicadas</p>
-        <p class="mt-2 text-ink/70">El primer número está en camino. Mientras tanto, conoce el proyecto.</p>
+        <p class="mt-2 text-primary-100">El primer número está en camino. Mientras tanto, conoce el proyecto.</p>
         <a href="/#sobre-nosotros" class="btn btn-outline mt-6">Sobre nosotros</a>
       </div>
     ) : (

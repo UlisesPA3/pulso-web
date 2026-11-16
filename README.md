@@ -22,8 +22,11 @@ Sitio de la revista biomédica universitaria PULSO (NEXUS EMBS). Astro + islas R
 - **Sistema de diseño:** `design-system/pulso/MASTER.md`. Paleta oficial del manual de marca (SPEC-05A):
   morado `#7c2982`, lima `#c9e85c`, coral `#f26d5b`, azul cielo `#8ecbe5`, fondo claro `#f5f6f3` y fondo oscuro
   `#261c2a`. Tokens en `src/styles/global.css`. Tipografías: Outfit (display), Inter (cuerpo), JetBrains Mono.
-- **Tema claro como base.** El fondo oscuro (`bg-bg-dark`) queda solo para el Footer (y la futura sección Conecta).
-  Ya no hay fondo 3D: se eliminó la esfera de Three.js y la dependencia `three`.
+- **Tema oscuro espacial como base (SPEC-06A).** Todo el sitio vive sobre `bg-space` (`#1a1025`) con nebulosa
+  morada y cielo estrellado en CSS puro (`body::before` / `body::after` en `global.css`; las estrellas cercanas
+  titilan y derivan, y se detienen con "reducir movimiento"). Las secciones no llevan fondo opaco; las tarjetas
+  son cristal oscuro (`.surface`) y las bandas usan `.band`. Texto en blanco / `primary-100` / `primary-200`.
+  El arte del Hero y el logo se aclaran con filtros CSS, sin regenerar archivos. Sigue sin haber fondo 3D.
 - **Hero fiel a `Portada.png`:** las piezas de las esquinas son recortes reales de la portada con transparencia,
   generados por `scripts/hero_capas.py` (Pillow + NumPy + SciPy) en `public/images/hero/`. Cada esquina se separa
   en capas del mismo tamaño para que floten por separado: corazón / constelación, microscopio / tubos y placa,

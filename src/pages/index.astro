@@ -4,12 +4,13 @@ import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero.astro';
 import BannerLema from '../components/BannerLema.astro';
 import EdicionCard from '../components/EdicionCard.astro';
+import CarruselEdiciones, { type TarjetaPasada } from '../components/React/CarruselEdiciones';
 import SobreNosotros from '../components/SobreNosotros.astro';
 import Conecta from '../components/Conecta.astro';
 import Equipo from '../components/Equipo.astro';
 import ContactoBloque from '../components/ContactoBloque.astro';
 import { getEdicionActual, getEdicionesPublicadas, tienePortada } from '../lib/ediciones';
-import { ACENTOS, secciones } from '../lib/secciones';
+import { ACENTOS, BENTO, secciones, type SlugSeccion, type TamanoBento } from '../lib/secciones';
 import { ICONOS_SECCION } from '../lib/secciones-iconos';
 import { destacados } from '../lib/destacados';
 
@@ -20,12 +21,67 @@ const actualHref = actual ? `/ediciones/${actual.id}` : '/ediciones';
 
 const seccionPorSlug = Object.fromEntries(secciones.map((s) => [s.slug, s]));
 const edicionPorSlug = Object.fromEntries(ediciones.map((e) => [e.id, e]));
-const pasadas = destacados.map((d) => ({
-  ...d,
-  seccion: seccionPorSlug[d.seccion],
-  Icono: ICONOS_SECCION[d.seccion],
-  numero: edicionPorSlug[d.edicion]?.data.numero,
-}));
+// Datos planos (serializables) para la isla del carrusel: el ícono lo resuelve ella por slug.
+const pasadas: TarjetaPasada[] = destacados.map((d) => {
+  const seccion = seccionPorSlug[d.seccion];
+  const { cabecera, icono, etiqueta } = ACENTOS[seccion.acento];
+  return {
+    slug: d.seccion,
+    seccion: seccion.nombre,
+    href: `/ediciones/${d.edicion}`,
+    titulo: d.titulo,
+    resumen: d.resumen,
+    numero: edicionPorSlug[d.edicion]?.data.numero,
+    imagen: d.imagen,
+    cabecera,
+    icono,
+    etiqueta,
+  };
+});
+
+// Bento de "Dentro de PULSO": clases por tamaño de celda. La tipografía y la distribución
+// interna crecen con la celda; en móvil todas se ven como la tarjeta normal.
+const normal = {
+  celda: 'p-6 pt-7',
+  halo: false,
+  marca: false,
+  insignia: 'h-12 w-12',
+  icono: 'h-6 w-6',
+  numero: 'text-5xl',
+  cuerpo: 'mt-6',
+  titulo: 'text-xl',
+  texto: 'mt-2 leading-relaxed lg:text-[0.95rem]',
+};
+const TAMANOS: Record<TamanoBento, typeof normal> = {
+  normal,
+  // Solo cambia la celda en tablet; por dentro es una tarjeta normal.
+  anchaTablet: { ...normal, celda: `${normal.celda} md:max-lg:col-span-2` },
+  // 2x1 en escritorio: un escalón más de tipografía y resplandor de acento.
+  ancha: {
+    ...normal,
+    celda: 'p-6 pt-7 lg:col-span-2 lg:p-8 lg:pt-9',
+    halo: true,
+    insignia: 'h-12 w-12 lg:h-14 lg:w-14',
+    icono: 'h-6 w-6 lg:h-7 lg:w-7',
+    numero: 'text-5xl lg:text-6xl',
+    titulo: 'text-xl lg:text-2xl',
+    texto: 'mt-2 leading-relaxed lg:max-w-md lg:text-lg',
+  },
+  // 2x2 en escritorio (2x1 en tablet): cabecera arriba, texto anclado abajo, ícono como
+  // marca de agua en el hueco central y tipografía de titular.
+  grande: {
+    celda: 'p-6 pt-7 md:col-span-2 md:p-8 md:pt-9 lg:row-span-2 lg:p-10 lg:pt-11',
+    halo: true,
+    marca: true,
+    insignia: 'h-12 w-12 md:h-14 md:w-14 lg:h-16 lg:w-16',
+    icono: 'h-6 w-6 md:h-7 md:w-7 lg:h-8 lg:w-8',
+    numero: 'text-5xl md:text-7xl lg:text-8xl',
+    cuerpo: 'mt-6 lg:mt-auto lg:pt-10',
+    titulo: 'text-xl md:text-2xl lg:text-4xl lg:leading-[1.05]',
+    texto: 'mt-2 leading-relaxed md:max-w-xl md:text-lg lg:mt-4 lg:max-w-md lg:text-xl lg:leading-relaxed',
+  },
+};
+const bento = Object.fromEntries(secciones.map((s) => [s.slug, TAMANOS[BENTO[s.slug] ?? 'normal']])) as Record<SlugSeccion, typeof normal>;
 
 // La hemeroteca del inicio muestra hasta 4 ejemplares; si sobra un hueco, lo ocupa "Próximamente".
 const enEstante = ediciones.slice(0, 4);
@@ -42,17 +98,17 @@ const huecoProximamente = enEstante.length < 4;
       <section id="revista" class="container-pulso scroll-mt-20 py-20 sm:py-28" aria-labelledby="actual-titulo">
         <div class="grid items-center gap-10 md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] md:gap-16" data-reveal="children">
           <a href={actualHref} class="group relative mx-auto block w-full max-w-xs [perspective:1200px] md:max-w-none" tabindex="-1" aria-hidden="true">
-            <span class="absolute -inset-6 -z-10 rounded-full bg-primary-300/50 blur-3xl"></span>
+            <span class="absolute -inset-6 -z-10 rounded-full bg-primary-500/45 blur-3xl"></span>
             {tienePortada(actual) ? (
               <img
                 src={actual.data.portada}
                 alt=""
                 width="720"
                 height="863"
-                class="w-full rounded-r-lg rounded-l-sm shadow-lift ring-1 ring-ink/10 transition-transform duration-700 ease-out-expo [transform:rotateY(-14deg)_rotateX(3deg)] group-hover:[transform:rotateY(-4deg)_rotateX(0deg)]"
+                class="w-full rounded-r-lg rounded-l-sm shadow-lift ring-1 ring-white/10 transition-transform duration-700 ease-out-expo [transform:rotateY(-14deg)_rotateX(3deg)] group-hover:[transform:rotateY(-4deg)_rotateX(0deg)]"
               />
             ) : (
-              <div class="flex aspect-[5/6] items-end rounded-lg bg-linear-to-br from-primary to-bg-dark p-8 shadow-lift ring-1 ring-ink/10">
+              <div class="flex aspect-[5/6] items-end rounded-lg bg-linear-to-br from-primary to-bg-dark p-8 shadow-lift ring-1 ring-white/10">
                 <p class="text-title text-2xl text-accent-lime">{actual.data.titulo}</p>
               </div>
             )}
@@ -60,14 +116,14 @@ const huecoProximamente = enEstante.length < 4;
 
           <div>
             <p class="flex flex-wrap items-center gap-x-3 gap-y-2">
-              <span class="rounded-full bg-primary px-3 py-1 font-mono text-xs font-medium tracking-[0.18em] text-white uppercase">Edición actual</span>
-              <span class="font-mono text-xs font-medium tracking-[0.18em] text-primary uppercase">
+              <span class="rounded-full bg-accent-green px-3 py-1 font-mono text-xs font-medium tracking-[0.18em] text-ink uppercase">Edición actual</span>
+              <span class="font-mono text-xs font-medium tracking-[0.18em] text-primary-300 uppercase">
                 Vol. {actual.data.volumen} · Núm. {actual.data.numero}
               </span>
-              <span class="font-mono text-xs tracking-[0.18em] text-ink/60 uppercase"><time>{actual.data.fecha}</time></span>
+              <span class="font-mono text-xs tracking-[0.18em] text-primary-200 uppercase"><time>{actual.data.fecha}</time></span>
             </p>
             <h2 id="actual-titulo" class="text-display mt-5 text-4xl text-balance sm:text-6xl">{actual.data.titulo}</h2>
-            <p class="mt-5 max-w-lg text-lg leading-relaxed text-ink/75">{actual.data.resumen}</p>
+            <p class="mt-5 max-w-lg text-lg leading-relaxed text-primary-100">{actual.data.resumen}</p>
             <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:gap-4">
               <a href={actualHref} class="btn btn-primary">
                 <BookOpen className="h-5 w-5" aria-hidden="true" />
@@ -85,86 +141,56 @@ const huecoProximamente = enEstante.length < 4;
   }
 
   {/* ---------- También en ediciones pasadas (un artículo por sección) ---------- */}
-  <section class="border-y border-primary-100 bg-white py-16 sm:py-24" aria-labelledby="pasadas-titulo">
-    <div class="container-pulso">
-      <div class="flex flex-wrap items-end justify-between gap-4" data-reveal>
-        <h2 id="pasadas-titulo" class="font-display text-2xl font-extrabold tracking-[0.06em] text-primary uppercase sm:text-3xl">
-          También en ediciones pasadas
-        </h2>
-        <a href="/ediciones" class="link-arrow group">
-          Ver todas las ediciones
-          <ArrowRight className="h-5 w-5 transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true" />
-        </a>
-      </div>
-
-      <ul class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" data-reveal="children">
-        {
-          pasadas.map(({ seccion, Icono, edicion, numero, titulo, resumen, imagen }) => {
-            const a = ACENTOS[seccion.acento];
-            return (
-              <li>
-                <a
-                  href={`/ediciones/${edicion}`}
-                  class="group flex h-full flex-col overflow-hidden rounded-2xl border border-ink/10 bg-white shadow-[0_1px_2px_rgb(38_28_42/0.06),0_10px_24px_-18px_rgb(38_28_42/0.35)] transition-[transform,box-shadow,border-color] duration-300 ease-out-expo hover:-translate-y-1 hover:border-primary-300 hover:shadow-shelf"
-                >
-                  {/* Cabecera: foto del artículo o, mientras no exista, degradado con el ícono de la sección */}
-                  <div class={`relative aspect-[16/10] overflow-hidden bg-linear-to-br ${a.cabecera}`}>
-                    {imagen ? (
-                      <img src={imagen} alt="" loading="lazy" decoding="async" class="h-full w-full object-cover transition-transform duration-500 ease-out-expo group-hover:scale-105" />
-                    ) : (
-                      <>
-                        <span class="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgb(38_28_42/0.09)_1px,transparent_0)] bg-[size:18px_18px]" aria-hidden="true" />
-                        <Icono className={`absolute top-1/2 left-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 stroke-[1.25] transition-transform duration-500 ease-out-expo group-hover:scale-110 ${a.icono}`} aria-hidden="true" />
-                      </>
-                    )}
-                    {numero && (
-                      <span class="absolute top-3 right-3 rounded-full bg-white/90 px-2.5 py-1 font-mono text-xs font-medium tracking-wider text-ink/70 uppercase backdrop-blur-sm">
-                        Núm. {numero}
-                      </span>
-                    )}
-                  </div>
-                  <div class="flex flex-1 flex-col p-6">
-                    <p class={`text-xs font-bold tracking-[0.14em] uppercase ${a.etiqueta}`}>{seccion.nombre}</p>
-                    <h3 class="mt-2 font-display text-xl leading-snug font-bold text-ink transition-colors group-hover:text-primary">{titulo}</h3>
-                    <p class="mt-2 line-clamp-3 text-[0.95rem] leading-relaxed text-ink/60">{resumen}</p>
-                  </div>
-                </a>
-              </li>
-            );
-          })
-        }
-      </ul>
+  <section class="band py-16 sm:py-24" aria-labelledby="pasadas-titulo">
+    {/* Isla React (SPEC-06C): carrusel de 4 tarjetas que "Ver todas" despliega en cuadrícula.
+        El revelado va en este div y no dentro de la isla, para no tocar el DOM que React hidrata. */}
+    <div class="container-pulso" data-reveal>
+      <CarruselEdiciones client:visible titulo="También en ediciones pasadas" tarjetas={pasadas} />
     </div>
   </section>
 
   {/* ---------- Dentro de PULSO: las 9 secciones oficiales ---------- */}
   <section id="secciones" class="container-pulso scroll-mt-20 py-16 sm:py-24" aria-labelledby="secciones-titulo">
     <div class="max-w-3xl" data-reveal>
-      <p class="font-display text-sm font-extrabold tracking-[0.2em] text-accent-green-dark uppercase">Dentro de PULSO</p>
+      <p class="font-display text-sm font-extrabold tracking-[0.2em] text-accent-green uppercase">Dentro de PULSO</p>
       <h2 id="secciones-titulo" class="text-display mt-4 text-4xl text-balance sm:text-5xl">
         Distintas formas de explorar la Ingeniería Biomédica.
       </h2>
-      <p class="mt-5 text-lg leading-relaxed text-ink/70">
+      <p class="mt-5 text-lg leading-relaxed text-primary-100">
         Cada sección tiene una intención diferente: descubrir, entender, conectar y encontrar nuevas posibilidades.
       </p>
     </div>
 
-    <ul class="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3" data-reveal="children">
+    {/*
+      Bento asimétrico (SPEC-06B). Móvil: 1 columna. Tablet: 2 columnas. Escritorio: 4 columnas
+      x 4 filas, en orden de lectura 01-09:
+        [01 01][02 02]
+        [01 01][03][04]
+        [05][06 06][07]
+        [08][06 06][09]
+      El reparto vive en BENTO (src/lib/secciones.ts); aquí solo se traduce a clases.
+    */}
+    <ul class="mt-12 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4" data-reveal="children">
       {
         secciones.map((seccion) => {
           const a = ACENTOS[seccion.acento];
           const Icono = ICONOS_SECCION[seccion.slug];
+          const t = bento[seccion.slug];
           return (
-            <li class="relative overflow-hidden rounded-2xl border border-ink/10 bg-white p-6 pt-7 transition-[transform,box-shadow] duration-300 ease-out-expo hover:-translate-y-1 hover:shadow-shelf sm:p-7 sm:pt-8">
+            <li class={`group relative flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.06] transition-[transform,box-shadow,border-color] duration-300 ease-out-expo hover:-translate-y-1 hover:border-white/25 hover:shadow-shelf ${t.celda}`}>
               <span class={`absolute inset-x-0 top-0 h-1 ${a.linea}`} aria-hidden="true" />
-              <div class="flex items-start justify-between">
-                <span class={`flex h-12 w-12 items-center justify-center rounded-full ${a.pastel} ${a.icono}`}>
-                  <Icono className="h-6 w-6" aria-hidden="true" />
+              {t.halo && <span class={`pointer-events-none absolute inset-0 bg-radial-[at_85%_10%] to-transparent to-65% ${a.halo}`} aria-hidden="true" />}
+              {t.marca && <Icono className={`pointer-events-none absolute top-[29%] -right-8 hidden h-60 w-60 stroke-[0.6] opacity-15 transition-transform duration-700 ease-out-expo group-hover:scale-105 group-hover:-rotate-3 lg:block ${a.icono}`} aria-hidden="true" />}
+              <div class="relative flex items-start justify-between">
+                <span class={`flex items-center justify-center rounded-full ${t.insignia} ${a.pastel} ${a.icono}`}>
+                  <Icono className={t.icono} aria-hidden="true" />
                 </span>
-                <span class="font-display text-5xl leading-none font-bold text-gray-200/80 select-none" aria-hidden="true">{seccion.numero}</span>
+                <span class={`font-display leading-none font-bold text-white/10 select-none ${t.numero}`} aria-hidden="true">{seccion.numero}</span>
               </div>
-              <h3 class="mt-6 font-display text-xl font-bold tracking-wide text-ink">{seccion.nombre}</h3>
-              <p class="mt-2 leading-relaxed text-ink/70">{seccion.descripcion}</p>
+              <div class={`relative ${t.cuerpo}`}>
+                <h3 class={`font-display font-bold tracking-wide text-balance text-white ${t.titulo}`}>{seccion.nombre}</h3>
+                <p class={`text-primary-100 ${t.texto}`}>{seccion.descripcion}</p>
+              </div>
             </li>
           );
         })
@@ -189,10 +215,10 @@ const huecoProximamente = enEstante.length < 4;
       {
         huecoProximamente && (
           <li class="pb-5 md:max-lg:hidden">
-            <div class="flex aspect-[5/6] flex-col items-center justify-center gap-3 rounded-md border-2 border-dashed border-primary-300 bg-white/60 p-4 text-center">
+            <div class="flex aspect-[5/6] flex-col items-center justify-center gap-3 rounded-md border-2 border-dashed border-primary-400/60 bg-white/[0.04] p-4 text-center">
               <Clock className="h-8 w-8 text-primary-400" aria-hidden="true" />
-              <p class="font-display text-lg font-bold text-primary">Próximamente</p>
-              <p class="text-sm text-ink/60">El siguiente número ya está en preparación.</p>
+              <p class="font-display text-lg font-bold text-white">Próximamente</p>
+              <p class="text-sm text-primary-200">El siguiente número ya está en preparación.</p>
             </div>
           </li>
         )
@@ -209,7 +235,7 @@ const huecoProximamente = enEstante.length < 4;
     <div class="max-w-3xl" data-reveal>
       <p class="eyebrow font-display text-sm font-extrabold tracking-[0.2em]">Contacto</p>
       <h2 id="contacto-titulo" class="text-display mt-4 text-4xl text-balance sm:text-5xl">Tu voz impulsa el próximo pulso</h2>
-      <p class="mt-5 text-lg leading-relaxed text-ink/75">
+      <p class="mt-5 text-lg leading-relaxed text-primary-100">
         ¿Quieres proponer un tema, colaborar con un artículo o sumarte al equipo? Escríbenos por cualquiera de estos canales.
       </p>
     </div>

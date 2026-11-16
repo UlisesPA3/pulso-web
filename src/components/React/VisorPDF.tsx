@@ -241,7 +241,7 @@ export default function VisorPDF({ url, titulo = 'la revista' }: Props) {
   const listo = estado === 'listo';
 
   const claseBoton =
-    'inline-flex h-11 w-11 items-center justify-center rounded-full border border-primary-200 bg-white text-primary transition-colors hover:border-primary hover:bg-primary-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-40';
+    'inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition-colors hover:border-accent-green hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-green disabled:cursor-not-allowed disabled:opacity-40';
 
   return (
     <div
@@ -250,8 +250,8 @@ export default function VisorPDF({ url, titulo = 'la revista' }: Props) {
       aria-label={`Visor de ${titulo}`}
       tabIndex={0}
       onKeyDown={alPulsarTecla}
-      className={`flex flex-col items-center gap-4 rounded-xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary ${
-        pantallaCompleta ? 'h-full w-full justify-center bg-bg-dark p-4' : ''
+      className={`flex flex-col items-center gap-4 rounded-xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent-green ${
+        pantallaCompleta ? 'h-full w-full justify-center bg-space p-4' : ''
       }`}
     >
       <div
@@ -267,14 +267,14 @@ export default function VisorPDF({ url, titulo = 'la revista' }: Props) {
         {estado === 'cargando' && (
           <div
             role="status"
-            className="flex aspect-[3/4] w-full flex-col items-center justify-center gap-4 rounded-lg border border-primary-200 bg-white px-6 sm:aspect-[3/2]"
+            className="flex aspect-[3/4] w-full flex-col items-center justify-center gap-4 rounded-lg border border-white/10 bg-white/[0.06] px-6 sm:aspect-[3/2]"
           >
-            <p className="text-sm font-medium text-ink/75">
+            <p className="text-sm font-medium text-primary-100">
               Cargando la revista… {progreso > 0 && `${Math.round(progreso * 100)}%`}
             </p>
-            <div className="h-1.5 w-full max-w-xs overflow-hidden rounded-full bg-primary-100">
+            <div className="h-1.5 w-full max-w-xs overflow-hidden rounded-full bg-white/15">
               <div
-                className="h-full rounded-full bg-primary transition-[width] duration-200"
+                className="h-full rounded-full bg-accent-green transition-[width] duration-200"
                 style={{ width: `${Math.round(progreso * 100)}%` }}
               />
             </div>
@@ -284,13 +284,13 @@ export default function VisorPDF({ url, titulo = 'la revista' }: Props) {
         {estado === 'error' && (
           <div
             role="alert"
-            className="flex flex-col items-center gap-3 rounded-lg border border-accent-coral/60 bg-white px-6 py-12 text-center"
+            className="flex flex-col items-center gap-3 rounded-lg border border-accent-coral/60 bg-white/[0.06] px-6 py-12 text-center"
           >
-            <p className="font-semibold text-ink">No pudimos abrir el visor.</p>
-            <p className="text-sm text-ink/70">Puedes leer la edición abriendo el PDF directamente.</p>
+            <p className="font-semibold text-white">No pudimos abrir el visor.</p>
+            <p className="text-sm text-primary-100">Puedes leer la edición abriendo el PDF directamente.</p>
             <a
               href={url}
-              className="mt-2 inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-white hover:bg-primary-700"
+              className="mt-2 inline-flex items-center gap-2 rounded-full bg-primary-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-primary-600"
             >
               <Download className="h-4 w-4" aria-hidden="true" /> Abrir PDF
             </a>
@@ -321,9 +321,9 @@ export default function VisorPDF({ url, titulo = 'la revista' }: Props) {
             </button>
           </div>
 
-          <p className={`text-sm tabular-nums ${pantallaCompleta ? 'text-primary-100' : 'text-ink/70'}`} aria-live="polite">
+          <p className="text-sm text-primary-100 tabular-nums" aria-live="polite">
             <span className="sr-only">Página </span>
-            <span className={`font-semibold ${pantallaCompleta ? 'text-white' : 'text-ink'}`}>{etiqueta}</span> / {totalPaginas}
+            <span className="font-semibold text-white">{etiqueta}</span> / {totalPaginas}
           </p>
 
           <div className="flex items-center gap-2">

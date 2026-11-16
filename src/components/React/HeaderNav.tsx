@@ -47,14 +47,14 @@ export default function HeaderNav({ links, path, edicionHref }: Props) {
         <header
           className={`sticky top-0 z-50 border-b transition-[background-color,border-color] duration-300 ${
             scrolled || open
-              ? 'border-primary-200 bg-white/85 shadow-[0_8px_24px_-18px_rgb(38_28_42/0.5)] backdrop-blur-xl'
-              : 'border-transparent bg-white/90 backdrop-blur-xl'
+              ? 'border-white/10 bg-space/80 shadow-[0_8px_24px_-18px_rgb(0_0_0/0.9)] backdrop-blur-xl'
+              : 'border-transparent bg-space/45 backdrop-blur-xl'
           }`}
         >
           <nav className="container-pulso flex h-16 items-center justify-between" aria-label="Principal">
             <a href="/" className="flex min-h-11 flex-col justify-center rounded-md" aria-label="PULSO, revista biomédica universitaria: inicio">
-              <span className="font-display text-[1.45rem] leading-none font-extrabold tracking-[0.04em] text-primary">PULSO</span>
-              <span className="mt-1 text-xs leading-none font-medium tracking-[0.14em] whitespace-nowrap text-ink uppercase max-[359px]:hidden">
+              <span className="font-display text-[1.45rem] leading-none font-extrabold tracking-[0.04em] text-white">PULSO</span>
+              <span className="mt-1 text-xs leading-none font-medium tracking-[0.14em] whitespace-nowrap text-primary-200 uppercase max-[359px]:hidden">
                 Revista Biomédica Universitaria
               </span>
             </a>
@@ -71,13 +71,13 @@ export default function HeaderNav({ links, path, edicionHref }: Props) {
                       onFocus={() => setHovered(href)}
                       onBlur={() => setHovered(null)}
                       className={`relative flex min-h-11 items-center rounded-full px-3.5 font-display text-[0.95rem] font-medium transition-colors ${
-                        active ? 'text-primary' : 'text-ink/80 hover:text-primary'
+                        active ? 'text-white' : 'text-primary-100 hover:text-white'
                       }`}
                     >
                       {hovered === href && (
                         <m.span
                           layoutId="nav-hover"
-                          className="absolute inset-x-0 inset-y-1 rounded-full bg-primary-100"
+                          className="absolute inset-x-0 inset-y-1 rounded-full bg-white/10"
                           transition={spring}
                         />
                       )}
@@ -108,7 +108,7 @@ export default function HeaderNav({ links, path, edicionHref }: Props) {
 
             <button
               type="button"
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full text-primary transition-colors hover:bg-primary-100 lg:hidden"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full text-white transition-colors hover:bg-white/10 lg:hidden"
               aria-controls="menu-movil"
               aria-expanded={open}
               aria-label={open ? 'Cerrar menú' : 'Abrir menú'}
@@ -138,7 +138,7 @@ export default function HeaderNav({ links, path, edicionHref }: Props) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8, transition: { duration: 0.14 } }}
                 transition={{ type: 'spring', stiffness: 320, damping: 28 }}
-                className="absolute inset-x-0 top-full max-h-[calc(100dvh-4rem)] overflow-y-auto border-b border-primary-200 bg-white pb-[max(1.25rem,env(safe-area-inset-bottom))] shadow-[0_24px_40px_-24px_rgb(38_28_42/0.45)] lg:hidden"
+                className="absolute inset-x-0 top-full max-h-[calc(100dvh-4rem)] overflow-y-auto border-b border-white/10 bg-space pb-[max(1.25rem,env(safe-area-inset-bottom))] shadow-[0_24px_40px_-24px_rgb(0_0_0/0.9)] lg:hidden"
               >
                 <m.ul
                   className="container-pulso flex flex-col py-3"
@@ -160,11 +160,11 @@ export default function HeaderNav({ links, path, edicionHref }: Props) {
                           href={href}
                           aria-current={active ? 'page' : undefined}
                           onClick={() => setOpen(false)}
-                          className={`flex min-h-14 items-center gap-4 border-b border-primary-100 font-display text-2xl font-semibold ${
-                            active ? 'text-primary' : 'text-ink'
+                          className={`flex min-h-14 items-center gap-4 border-b border-white/10 font-display text-2xl font-semibold ${
+                            active ? 'text-white' : 'text-primary-100'
                           }`}
                         >
-                          <span className={`font-mono text-xs ${active ? 'text-accent-coral-dark' : 'text-primary-500'}`}>
+                          <span className={`font-mono text-xs ${active ? 'text-accent-coral' : 'text-primary-300'}`}>
                             0{i + 1}
                           </span>
                           {label}
