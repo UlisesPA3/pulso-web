@@ -27,9 +27,11 @@ export const edicion = defineType({
     defineField({
       name: 'volumen',
       title: 'Volumen',
-      description: 'Solo el número. Ej.: 1',
+      description:
+        'Ciclo o año editorial (se queda en 1 durante el primer año; cambia a 2 al iniciar un nuevo ciclo).',
       type: 'number',
       group: 'datos',
+      initialValue: 1,
       validation: (rule) =>
         rule
           .required()
@@ -58,7 +60,7 @@ export const edicion = defineType({
       name: 'slug',
       title: 'Dirección web (slug)',
       description:
-        'Se usa en el enlace de la edición (pulso…/ediciones/vol-1-num-3). Llena primero Volumen y Número y pulsa "Generate".',
+        'Se usa en el enlace de la edición (pulso…/ediciones/vol-1-num-3). Llena primero el Número (el Volumen ya viene en 1) y pulsa "Generate".',
       type: 'slug',
       group: 'datos',
       options: {
