@@ -4,12 +4,13 @@ import { render } from 'astro:content';
 import { ArrowLeft } from 'lucide-react';
 import VisorPDF from '../../components/React/VisorPDF';
 import Layout from '../../layouts/Layout.astro';
-import { getEdicionesPublicadas, tienePdf, type Edicion } from '../../lib/ediciones';
+import { getEdicionesPublicadas, type Edicion } from '../../lib/ediciones';
+import { portableTextAHtml } from '../../lib/portable-text';
 
 export const getStaticPaths = (async () => {
   const ediciones = await getEdicionesPublicadas();
   return ediciones.map((edicion) => ({
-    params: { slug: edicion.id },
+    params: { slug: edicion.slug },
     props: { edicion },
   }));
 }) satisfies GetStaticPaths;
@@ -19,10 +20,11 @@ interface Props {
 }
 
 const { edicion } = Astro.props;
-const { titulo, volumen, numero, fecha, resumen, archivoPdf } = edicion.data;
-// Una edición puede publicarse antes de subir su PDF: en ese caso no se monta el visor.
-const pdfDisponible = tienePdf(edicion);
-const { Content } = await render(edicion);
+const { titulo, volumen, numero, fecha, resumen, archivoPdf, pdfDescarga, carta } = edicion;
+// Carta editorial: Portable Text si viene de Sanity, el cuerpo del Markdown si viene del respaldo local.
+const cartaHtml = carta.origen === 'sanity' ? portableTextAHtml(carta.bloques) : undefined;
+const Content = carta.origen === 'local' ? (await render(carta.entrada)).Content : undefined;
+const hayCarta = Boolean(Content) || Boolean(cartaHtml?.trim());
 ---
 
 <Layout title={titulo} description={resumen}>
@@ -41,10 +43,11 @@ const { Content } = await render(edicion);
   <section class="mt-10" aria-labelledby="visor-titulo">
     <h2 id="visor-titulo" class="sr-only">Leer la edición</h2>
     {
-      pdfDisponible ? (
+      // Una edición puede publicarse antes de subir su PDF: en ese caso no se monta el visor.
+      archivoPdf ? (
         <>
           {/* client:only: PDF.js depende de APIs del navegador y no puede ejecutarse en el servidor. */}
-          <VisorPDF client:only="react" url={archivoPdf} titulo={titulo}>
+          <VisorPDF client:only="react" url={archivoPdf} urlDescarga={pdfDescarga} titulo={titulo}>
             <div
               slot="fallback"
               class="mx-auto flex aspect-[3/4] w-full max-w-2xl animate-pulse items-center justify-center rounded-lg border border-white/10 bg-white/[0.06] text-sm text-primary-100 sm:aspect-[3/2]"
@@ -68,10 +71,14 @@ const { Content } = await render(edicion);
     }
   </section>
 
-  <section class="mt-14 max-w-3xl border-t border-white/10 pt-10" aria-labelledby="carta-editorial">
-    <h2 id="carta-editorial" class="text-title text-2xl">Carta editorial</h2>
-    <div class="mt-4 space-y-4 leading-relaxed text-primary-100">
-      <Content />
-    </div>
-  </section>
+  {
+    hayCarta && (
+      <section class="mt-14 max-w-3xl border-t border-white/10 pt-10" aria-labelledby="carta-editorial">
+        <h2 id="carta-editorial" class="text-title text-2xl">Carta editorial</h2>
+        <div class="mt-4 space-y-4 leading-relaxed text-primary-100">
+          {Content ? <Content /> : <Fragment set:html={cartaHtml} />}
+        </div>
+      </section>
+    )
+  }
 </Layout>

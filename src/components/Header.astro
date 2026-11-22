@@ -13,7 +13,7 @@ const links = [
 
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const actual = await getEdicionActual();
-const edicionHref = actual ? `/ediciones/${actual.id}` : '/ediciones';
+const edicionHref = actual ? `/ediciones/${actual.slug}` : '/ediciones';
 ---
 
 {/* Cristal oscuro con blur sobre el fondo espacial; wordmark en dos líneas a la izquierda y enlaces a la derecha.

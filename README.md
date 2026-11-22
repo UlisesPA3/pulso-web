@@ -12,10 +12,49 @@ Sitio de la revista biomédica universitaria PULSO (NEXUS EMBS). Astro + islas R
 
 ## Contenido
 
-- Ediciones: `src/content/ediciones/*.md`. El PDF va en `public/pdfs/` y la portada en `public/images/`
-  (rutas del frontmatter). Si falta alguno, la web lo dice ("PDF próximamente", "Portada en preparación")
-  en lugar de romperse.
+- **Fuente principal: Sanity** (proyecto `s78tashj`, dataset `production`). Ediciones y artículos de
+  "También en ediciones pasadas" se editan en el Studio (`studio/`). Guía para editores: `GUIA-EDITORIAL.md`.
+- **Respaldo local:** si Sanity no tiene ninguna edición publicada (o no responde durante el build), se usan
+  `src/content/ediciones/*.md` (PDF en `public/pdfs/`, portada en `public/images/`) y los destacados de
+  `src/lib/destacados.ts`. En cuanto existe una edición publicada en Sanity, Sanity es la única fuente.
+- Si falta el PDF o la portada, la web lo dice ("PDF próximamente", "Portada en preparación") en lugar de romperse.
 - Secciones de la revista: `src/lib/secciones.ts`.
+
+## Sanity CMS y despliegue
+
+### Variables de entorno (Vercel → Settings → Environment Variables)
+
+| Variable | Valor |
+| :-- | :-- |
+| `PUBLIC_SANITY_PROJECT_ID` | `s78tashj` |
+| `PUBLIC_SANITY_DATASET` | `production` |
+| `PUBLIC_SANITY_API_VERSION` | `2026-01-01` (opcional; es el valor por defecto) |
+
+En local: `cp .env.example .env`. Ninguna es secreta.
+
+### Studio
+
+```sh
+cd studio
+npm install
+npm run dev            # panel local en localhost:3333
+npx sanity deploy      # publica los cambios del Studio en <subdominio>.sanity.studio
+```
+
+La primera vez, `sanity deploy` pide elegir el subdominio (sugerido: `pulso-nexus`). El Studio se
+actualiza solo a nuevas versiones de Sanity (`deployment.autoUpdates` en `studio/sanity.cli.ts`).
+Para entrar en local hay que agregar `http://localhost:3333` en sanity.io/manage → API → CORS origins.
+
+### Publicación automática (Sanity → Vercel)
+
+El sitio es estático: lee Sanity al construirse. Para que un **Publish** en el Studio se vea en la web
+hay que reconstruir, y eso se automatiza una sola vez:
+
+1. Vercel → Settings → Git → **Deploy Hooks**: crea uno (rama `main`) y copia su URL.
+2. sanity.io/manage → API → **Webhooks** → Create: pega esa URL, dataset `production`,
+   activa *Create*, *Update* y *Delete*, filtro `_type in ["edicion", "destacado"]`, método `POST`.
+
+Desde entonces cada publicación dispara un build y la web se actualiza en uno o dos minutos.
 
 ## DESIGN_NOTES
 

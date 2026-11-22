@@ -1,4 +1,6 @@
-import type { SlugSeccion } from './secciones';
+import { secciones, type SlugSeccion } from './secciones';
+import type { SanityImageSource } from '@sanity/image-url';
+import { sanityClient, urlFor } from './sanity';
 
 /**
  * "También en ediciones pasadas": un artículo por cada una de las 9 secciones, tomado de los
@@ -18,7 +20,8 @@ export interface Destacado {
   imagen?: string;
 }
 
-export const destacados: readonly Destacado[] = [
+/** Respaldo local: se usa solo mientras Sanity no tenga destacados publicados. */
+const destacadosLocales: readonly Destacado[] = [
   {
     seccion: 'radar-biomed',
     edicion: 'vol-1-num-1',
@@ -83,3 +86,72 @@ export const destacados: readonly Destacado[] = [
       'Para ver, leer y escuchar: neuroprótesis tras una lesión medular, neuroética en las aulas y un podcast.',
   },
 ];
+
+/**
+ * Tarjeta del carrusel ya normalizada, venga de Sanity o del respaldo local (SPEC-07B).
+ * `edicionNumero` solo llega desde Sanity; en local lo resuelve la página con las ediciones.
+ */
+export interface DestacadoTarjeta {
+  seccion: SlugSeccion;
+  edicionSlug: string;
+  edicionNumero?: number;
+  titulo: string;
+  resumen: string;
+  imagen?: string;
+}
+
+interface DestacadoSanity {
+  titulo: string;
+  seccion: string;
+  resumen: string;
+  imagen: (SanityImageSource & { asset?: unknown }) | null;
+  edicionSlug: string | null;
+  edicionNumero: number | null;
+}
+
+// Solo artículos cuya edición está publicada: si no, la tarjeta llevaría a una página inexistente.
+const CONSULTA_DESTACADOS = /* groq */ `
+  *[_type == "destacado" && edicion->publicado == true && defined(edicion->slug.current)]
+    | order(coalesce(orden, 9999) asc, _createdAt desc) {
+      titulo,
+      seccion,
+      resumen,
+      imagen,
+      "edicionSlug": edicion->slug.current,
+      "edicionNumero": edicion->numero
+    }
+`;
+
+const SLUGS = new Set<string>(secciones.map((s) => s.slug));
+const esSeccion = (valor: string): valor is SlugSeccion => SLUGS.has(valor);
+
+async function cargar(): Promise<DestacadoTarjeta[]> {
+  try {
+    const remotos = await sanityClient.fetch<DestacadoSanity[]>(CONSULTA_DESTACADOS);
+    const validos = remotos.flatMap((d): DestacadoTarjeta[] => {
+      if (!d.edicionSlug || !esSeccion(d.seccion)) return [];
+      return [
+        {
+          seccion: d.seccion,
+          edicionSlug: d.edicionSlug,
+          edicionNumero: d.edicionNumero ?? undefined,
+          titulo: d.titulo,
+          resumen: d.resumen,
+          imagen: d.imagen?.asset ? urlFor(d.imagen).width(800).url() : undefined,
+        },
+      ];
+    });
+    if (validos.length > 0) return validos;
+    console.warn('[PULSO] Sanity no tiene destacados publicados: se usan los destacados locales.');
+  } catch (error) {
+    console.warn('[PULSO] No se pudo consultar Sanity: se usan los destacados locales.', error);
+  }
+  return destacadosLocales.map(({ edicion, ...resto }) => ({ ...resto, edicionSlug: edicion }));
+}
+
+let cache: Promise<DestacadoTarjeta[]> | undefined;
+
+/** Artículos del carrusel "También en ediciones pasadas", en el orden definido por los editores. */
+export function getDestacados(): Promise<DestacadoTarjeta[]> {
+  return (cache ??= cargar());
+}

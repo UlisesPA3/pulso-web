@@ -8,14 +8,14 @@ interface Props {
 }
 
 const { edicion, nivel: Titulo = 'h2' } = Astro.props;
-const { titulo, volumen, numero, fecha, portada } = edicion.data;
+const { slug, titulo, volumen, numero, fecha, portada, portadaAlt } = edicion;
 const conPortada = tienePortada(edicion);
 const conPdf = tienePdf(edicion);
 ---
 
 {/* Un ejemplar apoyado en su repisa: al pasar el cursor se levanta y se inclina. */}
 <a
-  href={`/ediciones/${edicion.id}`}
+  href={`/ediciones/${slug}`}
   class="group relative block rounded-lg pb-5 [perspective:1100px]"
 >
   <div
@@ -25,7 +25,7 @@ const conPdf = tienePdf(edicion);
       conPortada ? (
         <img
           src={portada}
-          alt={`Portada de PULSO Vol. ${volumen} Núm. ${numero}`}
+          alt={portadaAlt}
           width="720"
           height="863"
           loading="lazy"

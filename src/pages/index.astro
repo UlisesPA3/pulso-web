@@ -12,26 +12,28 @@ import ContactoBloque from '../components/ContactoBloque.astro';
 import { getEdicionActual, getEdicionesPublicadas, tienePortada } from '../lib/ediciones';
 import { ACENTOS, BENTO, secciones, type SlugSeccion, type TamanoBento } from '../lib/secciones';
 import { ICONOS_SECCION } from '../lib/secciones-iconos';
-import { destacados } from '../lib/destacados';
+import { getDestacados } from '../lib/destacados';
 
 const ediciones = await getEdicionesPublicadas();
 // La edición actual es la más reciente que ya se puede leer: hoy, Vol. 1 · Núm. 3.
 const actual = await getEdicionActual();
-const actualHref = actual ? `/ediciones/${actual.id}` : '/ediciones';
+const actualHref = actual ? `/ediciones/${actual.slug}` : '/ediciones';
+const destacados = await getDestacados();
 
 const seccionPorSlug = Object.fromEntries(secciones.map((s) => [s.slug, s]));
-const edicionPorSlug = Object.fromEntries(ediciones.map((e) => [e.id, e]));
+const edicionPorSlug = new Map(ediciones.map((e) => [e.slug, e]));
 // Datos planos (serializables) para la isla del carrusel: el ícono lo resuelve ella por slug.
-const pasadas: TarjetaPasada[] = destacados.map((d) => {
+// Se omiten las tarjetas cuya edición no existe en este build (llevarían a un 404).
+const pasadas: TarjetaPasada[] = destacados.filter((d) => edicionPorSlug.has(d.edicionSlug)).map((d) => {
   const seccion = seccionPorSlug[d.seccion];
   const { cabecera, icono, etiqueta } = ACENTOS[seccion.acento];
   return {
     slug: d.seccion,
     seccion: seccion.nombre,
-    href: `/ediciones/${d.edicion}`,
+    href: `/ediciones/${d.edicionSlug}`,
     titulo: d.titulo,
     resumen: d.resumen,
-    numero: edicionPorSlug[d.edicion]?.data.numero,
+    numero: d.edicionNumero ?? edicionPorSlug.get(d.edicionSlug)?.numero,
     imagen: d.imagen,
     cabecera,
     icono,
@@ -101,7 +103,7 @@ const huecoProximamente = enEstante.length < 4;
             <span class="absolute -inset-6 -z-10 rounded-full bg-primary-500/45 blur-3xl"></span>
             {tienePortada(actual) ? (
               <img
-                src={actual.data.portada}
+                src={actual.portada}
                 alt=""
                 width="720"
                 height="863"
@@ -109,7 +111,7 @@ const huecoProximamente = enEstante.length < 4;
               />
             ) : (
               <div class="flex aspect-[5/6] items-end rounded-lg bg-linear-to-br from-primary to-bg-dark p-8 shadow-lift ring-1 ring-white/10">
-                <p class="text-title text-2xl text-accent-lime">{actual.data.titulo}</p>
+                <p class="text-title text-2xl text-accent-lime">{actual.titulo}</p>
               </div>
             )}
           </a>
@@ -118,12 +120,12 @@ const huecoProximamente = enEstante.length < 4;
             <p class="flex flex-wrap items-center gap-x-3 gap-y-2">
               <span class="rounded-full bg-accent-green px-3 py-1 font-mono text-xs font-medium tracking-[0.18em] text-ink uppercase">Edición actual</span>
               <span class="font-mono text-xs font-medium tracking-[0.18em] text-primary-300 uppercase">
-                Vol. {actual.data.volumen} · Núm. {actual.data.numero}
+                Vol. {actual.volumen} · Núm. {actual.numero}
               </span>
-              <span class="font-mono text-xs tracking-[0.18em] text-primary-200 uppercase"><time>{actual.data.fecha}</time></span>
+              <span class="font-mono text-xs tracking-[0.18em] text-primary-200 uppercase"><time>{actual.fecha}</time></span>
             </p>
-            <h2 id="actual-titulo" class="text-display mt-5 text-4xl text-balance sm:text-6xl">{actual.data.titulo}</h2>
-            <p class="mt-5 max-w-lg text-lg leading-relaxed text-primary-100">{actual.data.resumen}</p>
+            <h2 id="actual-titulo" class="text-display mt-5 text-4xl text-balance sm:text-6xl">{actual.titulo}</h2>
+            <p class="mt-5 max-w-lg text-lg leading-relaxed text-primary-100">{actual.resumen}</p>
             <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:gap-4">
               <a href={actualHref} class="btn btn-primary">
                 <BookOpen className="h-5 w-5" aria-hidden="true" />
@@ -141,13 +143,17 @@ const huecoProximamente = enEstante.length < 4;
   }
 
   {/* ---------- También en ediciones pasadas (un artículo por sección) ---------- */}
-  <section class="band py-16 sm:py-24" aria-labelledby="pasadas-titulo">
-    {/* Isla React (SPEC-06C): carrusel de 4 tarjetas que "Ver todas" despliega en cuadrícula.
-        El revelado va en este div y no dentro de la isla, para no tocar el DOM que React hidrata. */}
-    <div class="container-pulso" data-reveal>
-      <CarruselEdiciones client:visible titulo="También en ediciones pasadas" tarjetas={pasadas} />
-    </div>
-  </section>
+  {
+    pasadas.length > 0 && (
+      <section class="band py-16 sm:py-24" aria-labelledby="pasadas-titulo">
+        {/* Isla React (SPEC-06C): carrusel de 4 tarjetas que "Ver todas" despliega en cuadrícula.
+            El revelado va en este div y no dentro de la isla, para no tocar el DOM que React hidrata. */}
+        <div class="container-pulso" data-reveal>
+          <CarruselEdiciones client:visible titulo="También en ediciones pasadas" tarjetas={pasadas} />
+        </div>
+      </section>
+    )
+  }
 
   {/* ---------- Dentro de PULSO: las 9 secciones oficiales ---------- */}
   <section id="secciones" class="container-pulso scroll-mt-20 py-16 sm:py-24" aria-labelledby="secciones-titulo">
