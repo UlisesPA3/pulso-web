@@ -20,8 +20,13 @@ import workerSrc from 'pdfjs-dist/legacy/build/pdf.worker.min.mjs?url';
 GlobalWorkerOptions.workerSrc = workerSrc;
 
 interface Props {
-  /** Ruta pública del PDF, ej. "/pdfs/pulso-num-1.pdf". */
+  /** URL del PDF: local ("/pdfs/pulso-num-1.pdf") o de Sanity ("https://cdn.sanity.io/files/..."). */
   url: string;
+  /**
+   * URL para descargar el PDF. El atributo `download` no funciona entre dominios, así que con
+   * Sanity se usa la variante `?dl=` que el CDN sirve como descarga. Por defecto, `url`.
+   */
+  urlDescarga?: string;
   /** Título de la edición, para las etiquetas accesibles. */
   titulo?: string;
 }
@@ -41,7 +46,7 @@ const VENTANA_MEMORIA = 6;
 const CLASE_PAGINA = 'overflow-hidden bg-white';
 const CLASE_CANVAS = 'object-contain opacity-0 transition-opacity duration-300';
 
-export default function VisorPDF({ url, titulo = 'la revista' }: Props) {
+export default function VisorPDF({ url, urlDescarga = url, titulo = 'la revista' }: Props) {
   const raizRef = useRef<HTMLDivElement>(null);
   const anfitrionRef = useRef<HTMLDivElement>(null);
   const libroRef = useRef<PageFlip | null>(null);
@@ -67,7 +72,9 @@ export default function VisorPDF({ url, titulo = 'la revista' }: Props) {
     setProgreso(0);
     setIndice(0);
 
-    const carga = getDocument({ url });
+    // Los PDFs de cdn.sanity.io son públicos: no hace falta enviar cookies. Como el CDN no
+    // expone Content-Range por CORS, PDF.js los descarga en streaming (no por rangos).
+    const carga = getDocument({ url, withCredentials: false });
     carga.onProgress = ({ loaded, total }: { loaded: number; total: number }) => {
       if (!cancelado && total > 0) setProgreso(Math.min(1, loaded / total));
     };
@@ -297,6 +304,8 @@ export default function VisorPDF({ url, titulo = 'la revista' }: Props) {
             <p className="text-sm text-primary-100">Puedes leer la edición abriendo el PDF directamente.</p>
             <a
               href={url}
+              target="_blank"
+              rel="noopener"
               className="mt-2 inline-flex items-center gap-2 rounded-full bg-primary-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-primary-600"
             >
               <Download className="h-4 w-4" aria-hidden="true" /> Abrir PDF
@@ -334,7 +343,7 @@ export default function VisorPDF({ url, titulo = 'la revista' }: Props) {
           </p>
 
           <div className="flex items-center gap-2">
-            <a href={url} download className={claseBoton} aria-label="Descargar PDF">
+            <a href={urlDescarga} download className={claseBoton} aria-label="Descargar PDF">
               <Download className="h-5 w-5" aria-hidden="true" />
             </a>
             {admitePantallaCompleta && (
