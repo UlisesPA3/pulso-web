@@ -1,6 +1,6 @@
 import { secciones, type SlugSeccion } from './secciones';
 import type { SanityImageSource } from '@sanity/image-url';
-import { sanityClient, urlFor } from './sanity';
+import { sanityClient, sanityConfig, urlFor } from './sanity';
 
 /**
  * "También en ediciones pasadas": un artículo por cada una de las 9 secciones, tomado de los
@@ -141,11 +141,17 @@ async function cargar(): Promise<DestacadoTarjeta[]> {
         },
       ];
     });
+    const descartados = remotos.length - validos.length;
+    console.log(
+      `[PULSO] Sanity (${sanityConfig.projectId}/${sanityConfig.dataset}): ${remotos.length} destacado(s) publicado(s)` +
+        (descartados > 0 ? `, ${descartados} descartado(s) por sección o edición inválida.` : '.'),
+    );
     if (validos.length > 0) return validos;
-    console.warn('[PULSO] Sanity no tiene destacados publicados: se usan los destacados locales.');
+    console.warn('[PULSO] Fallback local de destacados: Sanity no devolvió destacados válidos.');
   } catch (error) {
-    console.warn('[PULSO] No se pudo consultar Sanity: se usan los destacados locales.', error);
+    console.error('[PULSO] Fallback local de destacados: error al consultar Sanity →', error);
   }
+  console.log(`[PULSO] Usando ${destacadosLocales.length} destacado(s) locales (src/lib/destacados.ts).`);
   return destacadosLocales.map(({ edicion, ...resto }) => ({ ...resto, edicionSlug: edicion }));
 }
 

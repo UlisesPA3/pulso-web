@@ -15,9 +15,11 @@ export const sanityConfig = {
   apiVersion: import.meta.env.PUBLIC_SANITY_API_VERSION || '2026-01-01',
 } as const;
 
+// Sin CDN: el sitio solo consulta Sanity al construirse, y un build disparado por el webhook
+// tiene que ver lo que se acaba de publicar, no la copia en caché del CDN (que tarda en refrescarse).
 export const sanityClient = createClient({
   ...sanityConfig,
-  useCdn: true,
+  useCdn: false,
   perspective: 'published',
 });
 

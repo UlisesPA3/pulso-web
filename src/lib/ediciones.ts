@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { getCollection, type CollectionEntry } from 'astro:content';
 import type { PortableTextBlock } from '@portabletext/types';
 import type { SanityImageSource } from '@sanity/image-url';
-import { sanityClient, urlFor } from './sanity';
+import { sanityClient, sanityConfig, urlFor } from './sanity';
 
 /**
  * Ediciones de PULSO (SPEC-07B). La fuente de verdad es Sanity; si el dataset aún no tiene
@@ -119,12 +119,17 @@ export type OrigenDatos = 'sanity' | 'local';
 async function cargar(): Promise<{ origen: OrigenDatos; ediciones: Edicion[] }> {
   try {
     const remotas = await sanityClient.fetch<EdicionSanity[]>(CONSULTA_EDICIONES);
+    console.log(
+      `[PULSO] Sanity (${sanityConfig.projectId}/${sanityConfig.dataset}): ${remotas.length} edición(es) publicada(s).`,
+    );
     if (remotas.length > 0) return { origen: 'sanity', ediciones: remotas.map(desdeSanity) };
-    console.warn('[PULSO] Sanity no tiene ediciones publicadas: se usan las ediciones locales.');
+    console.warn('[PULSO] Fallback local de ediciones: Sanity devolvió 0 ediciones publicadas.');
   } catch (error) {
-    console.warn('[PULSO] No se pudo consultar Sanity: se usan las ediciones locales.', error);
+    console.error('[PULSO] Fallback local de ediciones: error al consultar Sanity →', error);
   }
-  return { origen: 'local', ediciones: await edicionesLocales() };
+  const locales = await edicionesLocales();
+  console.log(`[PULSO] Usando ${locales.length} edición(es) locales (src/content/ediciones).`);
+  return { origen: 'local', ediciones: locales };
 }
 
 // Una sola consulta por build, compartida por todas las páginas y componentes.
