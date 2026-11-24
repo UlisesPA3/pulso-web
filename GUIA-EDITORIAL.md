@@ -7,8 +7,8 @@ todo se hace desde un panel en el navegador, como si llenaras un formulario.
 
 ## 1. Cómo entrar al panel
 
-1. Abre el enlace del panel: **https://pulso-nexus.sanity.studio**
-   (si el equipo eligió otra dirección, usa esa).
+1. Abre el enlace del panel: **https://pulso-studio-eight.vercel.app**
+   (guárdalo en tus favoritos).
 2. Inicia sesión con la cuenta (Google, GitHub o correo) que el equipo autorizó.
    Si te dice que no tienes acceso, pide a quien administra el proyecto que te invite.
 3. A la izquierda verás dos apartados:

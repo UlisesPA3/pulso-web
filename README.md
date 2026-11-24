@@ -34,16 +34,19 @@ En local: `cp .env.example .env`. Ninguna es secreta.
 
 ### Studio
 
+Panel en producción: **https://pulso-studio-eight.vercel.app** (proyecto de Vercel aparte, con
+*Root Directory* `studio` y *Output Directory* `dist`). Cada push a `main` lo vuelve a desplegar.
+
 ```sh
 cd studio
 npm install
-npm run dev            # panel local en localhost:3333
-npx sanity deploy      # publica los cambios del Studio en <subdominio>.sanity.studio
+npm run dev            # panel local en localhost:3333 (incluye la pestaña Vision)
+npm run build          # el mismo build que ejecuta Vercel
 ```
 
-La primera vez, `sanity deploy` pide elegir el subdominio (sugerido: `pulso-nexus`). El Studio se
-actualiza solo a nuevas versiones de Sanity (`deployment.autoUpdates` en `studio/sanity.cli.ts`).
-Para entrar en local hay que agregar `http://localhost:3333` en sanity.io/manage → API → CORS origins.
+El Studio se actualiza solo a nuevas versiones de Sanity (`deployment.autoUpdates` en `studio/sanity.cli.ts`).
+En sanity.io/manage → API → CORS origins deben estar `https://pulso-studio-eight.vercel.app` y, para trabajar
+en local, `http://localhost:3333`, ambos con *Allow credentials*.
 
 ### Publicación automática (Sanity → Vercel)
 
