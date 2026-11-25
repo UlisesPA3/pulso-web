@@ -2,6 +2,9 @@
 
 Sitio de la revista biomédica universitaria PULSO (NEXUS EMBS). Astro + islas React + Tailwind v4.
 
+- Sitio: **https://pulsobynexus.org**
+- Panel editorial (Sanity Studio): **https://admin.pulsobynexus.org**
+
 ## Comandos
 
 | Comando | Acción |
@@ -34,7 +37,7 @@ En local: `cp .env.example .env`. Ninguna es secreta.
 
 ### Studio
 
-Panel en producción: **https://pulso-studio-eight.vercel.app** (proyecto de Vercel aparte, con
+Panel en producción: **https://admin.pulsobynexus.org** (proyecto de Vercel aparte, con
 *Root Directory* `studio` y *Output Directory* `dist`). Cada push a `main` lo vuelve a desplegar.
 
 ```sh
@@ -45,7 +48,7 @@ npm run build          # el mismo build que ejecuta Vercel
 ```
 
 El Studio se actualiza solo a nuevas versiones de Sanity (`deployment.autoUpdates` en `studio/sanity.cli.ts`).
-En sanity.io/manage → API → CORS origins deben estar `https://pulso-studio-eight.vercel.app` y, para trabajar
+En sanity.io/manage → API → CORS origins deben estar `https://admin.pulsobynexus.org` y, para trabajar
 en local, `http://localhost:3333`, ambos con *Allow credentials*.
 
 ### Publicación automática (Sanity → Vercel)

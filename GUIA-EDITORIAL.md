@@ -7,7 +7,7 @@ todo se hace desde un panel en el navegador, como si llenaras un formulario.
 
 ## 1. Cómo entrar al panel
 
-1. Abre el enlace del panel: **https://pulso-studio-eight.vercel.app**
+1. Abre el enlace del panel: **https://admin.pulsobynexus.org**
    (guárdalo en tus favoritos).
 2. Inicia sesión con la cuenta (Google, GitHub o correo) que el equipo autorizó.
    Si te dice que no tienes acceso, pide a quien administra el proyecto que te invite.
