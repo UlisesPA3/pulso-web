@@ -94,8 +94,8 @@ Desde entonces cada publicación dispara un build y la web se actualiza en uno o
   Cada entrada acepta un campo `imagen`; mientras no haya foto se muestra un degradado con el ícono de la sección.
 - **Comunidad, Conecta, Equipo y Contacto (SPEC-05C):** `SobreNosotros.astro`, `Conecta.astro`, `Equipo.astro` y
   `ContactoBloque.astro` (este último se usa en el inicio y en `/contacto`). Los logos y la foto se optimizan con
-  `python scripts/comunidad_assets.py` hacia `public/images/comunidad/`. La imagen de Conecta reutiliza la red
-  molecular de la portada sobre un degradado oscuro, a la espera del render 3D definitivo.
+  `python scripts/comunidad_assets.py` hacia `public/images/comunidad/`. La imagen de Conecta es
+  `public/images/conecta.jpg`, en un marco morado sutil.
 - **Contraste:** lima, azul cielo y coral no se usan como texto sobre fondos claros; para eso están
   `accent-green-dark`, `accent-blue-dark` y `accent-coral-dark` (mismo tono, contraste de 4.5:1 o más).
 - **Estantería:** `EdicionCard.astro`; cada ejemplar se apoya en su repisa y se levanta e inclina al pasar el cursor.

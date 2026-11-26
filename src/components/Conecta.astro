@@ -1,11 +1,8 @@
 ---
 import { ExternalLink } from 'lucide-react';
-import { heroCapas } from '../lib/hero-capas';
-
-const { ancho, alto } = heroCapas.br;
 ---
 
-{/* Banda sobre el fondo espacial; el panel de la red molecular conserva su degradado propio. */}
+{/* Banda sobre el fondo espacial: texto a la izquierda e imagen a la derecha (apilados en móvil). */}
 <section id="conecta" class="band scroll-mt-16 py-16 text-white sm:py-24" aria-labelledby="conecta-titulo">
   <div class="container-pulso grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
     <div data-reveal="children">
@@ -25,23 +22,17 @@ const { ancho, alto } = heroCapas.br;
       </p>
     </div>
 
-    {/* Red molecular de la portada flotando sobre un degradado oscuro. Queda lista para sustituirse por el render 3D definitivo. */}
-    <div class="relative aspect-[4/3] overflow-hidden rounded-2xl bg-[radial-gradient(90%_80%_at_75%_25%,var(--color-primary-700),transparent_65%),radial-gradient(70%_70%_at_10%_95%,rgb(142_203_229/0.22),transparent_60%),linear-gradient(140deg,var(--color-primary-900),#1a121d)] ring-1 ring-white/10" data-reveal aria-hidden="true">
-      <span class="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgb(255_255_255/0.09)_1px,transparent_0)] bg-[size:22px_22px]"></span>
-      <div class="zg-x absolute top-[4%] right-[-6%] h-[112%]" style={`aspect-ratio:${ancho}/${alto};--zx:10px;--zx-d:17s;--z-delay:-4s`}>
-        <div class="zg-y h-full w-full" style="--zy:12px;--zy-d:11s;--z-delay:-4s">
-          <div class="zg-r h-full w-full" style="--zr:1.6deg;--zr-d:23s;--z-delay:-4s;transform-origin:85% 50%">
-            <img src="/images/hero/br-moleculas.webp" alt="" width={ancho} height={alto} loading="lazy" decoding="async" class="h-full w-full opacity-80 brightness-0 invert" />
-          </div>
-        </div>
-      </div>
-      {[
-        { cls: 'top-[16%] left-[14%] h-3 w-3 bg-accent-green', d: '9s', delay: '-2s' },
-        { cls: 'top-[62%] left-[26%] h-2 w-2 bg-accent-coral', d: '7s', delay: '-5s' },
-        { cls: 'top-[36%] left-[40%] h-2.5 w-2.5 bg-accent-blue', d: '11s', delay: '-1s' },
-      ].map((n) => (
-        <span class={`zg-y absolute rounded-full shadow-[0_0_14px_2px_currentColor] ${n.cls}`} style={`--zy:10px;--zy-d:${n.d};--z-delay:${n.delay}`} />
-      ))}
-    </div>
+    {/* Imagen de la comunidad en un marco morado sutil; en móvil queda debajo del texto. */}
+    <figure class="rounded-3xl bg-primary-300/10 p-3 ring-1 ring-white/10 sm:p-4" data-reveal>
+      <img
+        src="/images/conecta.jpg"
+        alt="Ilustración 3D de cadenas moleculares de colores entrelazadas, símbolo de la biomedicina y de la red de investigadores y estudiantes que forman la comunidad científica."
+        width="1090"
+        height="604"
+        loading="lazy"
+        decoding="async"
+        class="aspect-[1090/604] w-full rounded-2xl object-cover"
+      />
+    </figure>
   </div>
 </section>

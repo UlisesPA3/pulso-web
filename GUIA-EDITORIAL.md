@@ -22,17 +22,33 @@ todo se hace desde un panel en el navegador, como si llenaras un formulario.
 
 ## 2. Regla de oro: antes de subir un PDF
 
-**Comprime el PDF para que pese menos de 15–20 MB.**
+**Mientras más ligero el PDF, mejor.** La mayoría de los lectores abren la revista desde el celular, muchas
+veces con datos móviles, y el visor descarga el archivo **completo** antes de poder mostrarlo.
 
-La mayoría de los lectores abren la revista desde el celular, muchas veces con datos móviles. Un PDF de 30 MB
-o más tarda mucho en cargar y puede que la persona se vaya antes de verlo.
+### ¿Cuánto debe pesar?
 
-Cómo hacerlo:
+| | Peso del PDF | Qué pasa |
+| :-- | :-- | :-- |
+| ✅ **Ideal** | **5 a 15 MB** | Abre rápido en el celular y cuida la cuota mensual gratuita de Sanity (10 GB de descargas). |
+| ⚠️ **Límite sano** | **Hasta 25–30 MB** | Funciona, pero tarda más con datos móviles. Intenta comprimirlo un poco más. |
+| ❌ **Evitar** | **50 a 100 MB o más** | El visor tiene que cargar todo el archivo en la memoria del celular, tarda muchísimo con datos móviles y agota rápido el ancho de banda gratuito. |
 
-- **En Canva:** al descargar, elige *PDF estándar* (no *PDF para impresión*).
-- **Con una herramienta en línea:** por ejemplo, iLovePDF o Smallpdf, opción *Comprimir PDF* en nivel
-  *recomendado*.
-- Después de comprimir, ábrelo y revisa que el texto y las imágenes se sigan viendo bien.
+Para saber cuánto pesa: en Windows, clic derecho sobre el archivo → *Propiedades*; en Mac, clic derecho →
+*Obtener información*.
+
+> **¿Por qué importa la cuota?** Cada lectura descarga el PDF completo. Con un PDF de 10 MB, los 10 GB del
+> mes alcanzan para unas 1,000 lecturas; con uno de 100 MB, solo para unas 100.
+
+### Cómo exportarlo para que pese poco
+
+1. **Desde Canva o InDesign, exporta siempre como "PDF Estándar"** (optimizado para web o pantalla).
+   **No uses "PDF para impresión"** (300 DPI): está pensado para imprenta y pesa varias veces más sin que
+   se vea mejor en una pantalla.
+2. **¿Aún pesa más de 15–20 MB?** Pásalo por un compresor gratuito antes de subirlo al panel, por ejemplo
+   **iLovePDF** (*Comprimir PDF*) o **Adobe Acrobat Online** (*Comprimir PDF*), en el nivel de compresión
+   **recomendado**.
+3. **Revisa el resultado:** abre el PDF comprimido y comprueba que el texto y las imágenes se sigan viendo
+   bien. Si algo se ve borroso, usa un nivel de compresión más suave.
 
 Haz lo mismo con la **portada**: una imagen JPG de menos de 1 MB es suficiente.
 
